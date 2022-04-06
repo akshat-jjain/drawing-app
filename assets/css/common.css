@@ -1,0 +1,98 @@
+:root {
+    --font-size: 14px;
+    --picked-color: #000000;
+    --picked-size: 1px;
+}
+
+@media (max-width:600px) {
+    :root {
+        --font-size: 12px;
+    }
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+canvas {
+    border: 1px solid #000000;
+    cursor: auto;
+    background: #ffffff;
+}
+
+.color-picker,
+.all-btn,
+.tools {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: space-around;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    max-height: 50px;
+}
+
+.saveBtn {
+    background: #1e90ff;
+    padding: 1%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.clr {
+    min-width: 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid black;
+    /* border: 3px solid rgb(214, 214, 214); */
+    margin: 2px;
+    cursor: pointer;
+    transition: transform .5s;
+    background: linear-gradient( 90deg, red, orange, yellow, green, blue, indigo, violet, red);
+}
+
+.clr:hover {
+    transform: scale(1.2);
+}
+
+.size-picker {
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+}
+
+.size-block {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    background: #ffffff;
+    width: 150px;
+    border: 1px solid #000000;
+}
+
+.size-picker:hover>.size-block {
+    display: flex;
+}
+
+.line {
+    flex: 0 0 auto;
+    margin: 8px;
+    padding: 2px;
+    cursor: pointer;
+    border: none;
+}
+
+.eraser,
+.pencil {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #000000;
+    cursor: pointer;
+    text-align: center;
+    padding: 6%;
+}
