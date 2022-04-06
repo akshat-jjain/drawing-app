@@ -40,7 +40,7 @@ const startDrawing = (e) => {
     // canvas.style.cursor = 'url("https://img.icons8.com/ios/50/000000/pencil-tip.png"), auto';
     if (select != "pencil") {
         prevPosX = e.clientX;
-        prevPosY = e.clientY-80;
+        prevPosY = e.clientY - 80;
     }
 };
 const draw = (e) => {
@@ -59,7 +59,7 @@ const draw = (e) => {
         contxt.moveTo(prevPosX, prevPosY);
         contxt.lineTo(currPosX, currPosY);
         contxt.stroke();
-        
+
         prevPosX = currPosX;
         prevPosY = currPosY;
     }
@@ -70,7 +70,7 @@ const stopDrawing = (e) => {
         contxt.beginPath();
         let currPosX = e.clientX;
         let currPosY = e.clientY;
-        contxt.rect(prevPosX, prevPosY, currPosX-prevPosX, currPosY-80-prevPosY);
+        contxt.rect(prevPosX, prevPosY, currPosX - prevPosX, currPosY - 80 - prevPosY);
         contxt.stroke();
     }
     // canvas.style.cursor = 'pointer';
@@ -108,6 +108,12 @@ color.addEventListener("input", () => {
 document.querySelector(".eraser").addEventListener("click", erase);
 document.querySelector(".pencil").addEventListener("click", pencil);
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
-canvas.addEventListener("mousedown", startDrawing);
-canvas.addEventListener("mousemove", draw);
-canvas.addEventListener("mouseup", stopDrawing);
+if ("ontouchstart" in document.documentElement) {
+    canvas.addEventListener("touchstart", startDrawing);
+    canvas.addEventListener("touchmove", draw);
+    canvas.addEventListener("touchend", stopDrawing);
+} else {
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mouseup", stopDrawing);
+}
