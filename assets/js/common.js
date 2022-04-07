@@ -109,10 +109,12 @@ document.querySelector(".eraser").addEventListener("click", erase);
 document.querySelector(".pencil").addEventListener("click", pencil);
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
+    alert("touch");
     canvas.addEventListener("touchstart", startDrawing);
     canvas.addEventListener("touchmove", draw);
     canvas.addEventListener("touchend", stopDrawing);
 } else {
+    alert("No touch");
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
