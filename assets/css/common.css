@@ -16,7 +16,9 @@
     padding: 0;
     user-select: none;
 }
-
+body {
+    overscroll-behavior: contain;
+}
 canvas {
     border: 1px solid #000000;
     cursor: auto;
