@@ -108,7 +108,7 @@ color.addEventListener("input", () => {
 document.querySelector(".eraser").addEventListener("click", erase);
 document.querySelector(".pencil").addEventListener("click", pencil);
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
-if ("ontouchstart" in document.documentElement) {
+if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     canvas.addEventListener("touchstart", startDrawing);
     canvas.addEventListener("touchmove", draw);
     canvas.addEventListener("touchend", stopDrawing);
