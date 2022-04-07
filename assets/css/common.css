@@ -53,7 +53,7 @@ canvas {
     margin: 2px;
     cursor: pointer;
     transition: transform .5s;
-    background: linear-gradient( 90deg, red, orange, yellow, green, blue, indigo, violet, red);
+    background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet, red);
 }
 
 .clr:hover {
@@ -87,8 +87,7 @@ canvas {
     border: none;
 }
 
-.eraser,
-.pencil {
+.tool {
     width: 30px;
     height: 30px;
     border: 1px solid #000000;

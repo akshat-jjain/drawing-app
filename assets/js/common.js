@@ -5,13 +5,15 @@ let clrs = document.querySelectorAll(".clr");
 clrs = Array.from(clrs);
 let lines = document.querySelectorAll(".line");
 lines = Array.from(lines);
-canvas.width = window.innerWidth - 50;
-canvas.height = window.innerHeight - 150;
-
+let ispolygon = false;
+let polygonSt = [];
+const shapes = ['rectangle', 'line', 'ellipse', 'polygon'];
 let isDrawing = false;
 let select = "pencil";
 let pencilSize = 1;
+let eraserSize = 5;
 let pencilColor = "#000000";
+let canvasColor = "#ffffff";
 
 let prevPosX = null;
 let prevPosY = null;
@@ -38,7 +40,10 @@ contxt.beginPath();
 const startDrawing = (e) => {
     isDrawing = true;
     // canvas.style.cursor = 'url("https://img.icons8.com/ios/50/000000/pencil-tip.png"), auto';
-    if (select != "pencil") {
+    if (ispolygon) {
+        return;
+    }
+    if (shapes.includes(select)) {
         [prevPosX, prevPosY] = getCords(e);
     }
 };
@@ -47,7 +52,7 @@ const draw = (e) => {
         [prevPosX, prevPosY] = getCords(e);
         return
     }
-    if (select == "rect") {
+    if (shapes.includes(select)) {
         return;
     } else {
         let [currPosX, currPosY] = getCords(e);
@@ -63,10 +68,23 @@ const draw = (e) => {
 };
 const stopDrawing = (e) => {
     isDrawing = false;
-    if (select != "pencil") {
+    if (shapes.includes(select)) {
         contxt.beginPath();
         let [currPosX, currPosY] = getCords(e);
-        contxt.rect(prevPosX, prevPosY, currPosX - prevPosX, currPosY - prevPosY);
+        switch (select) {
+            case 'rectangle':
+                drawRect(currPosX, currPosY);
+                break;
+            case 'ellipse':
+                drawCir(currPosX, currPosY);
+                break;
+            case 'line':
+                drawLine(currPosX, currPosY);
+                break;
+            case 'polygon':
+                drawPoly(currPosX, currPosY);
+                break;
+        }
         contxt.stroke();
     }
     // canvas.style.cursor = 'pointer';
@@ -81,19 +99,45 @@ const saveImg = () => {
     a.remove();
 };
 const erase = () => {
-    contxt.strokeStyle = "#ffffff";
-    contxt.lineWidth = 5;
+    contxt.strokeStyle = canvasColor;
+    contxt.lineWidth = eraserSize;
     select = "eraser";
 };
 const pencil = () => {
-    contxt.strokeStyle = pencilColor;
-    contxt.lineWidth = pencilSize;
+    updatePencil();
     select = "pencil";
 };
-const drawRect = () => {
-    select = "rect";
-
+const drawRect = (currPosX, currPosY) => {
+    contxt.rect(prevPosX, prevPosY, currPosX - prevPosX, currPosY - prevPosY);
 };
+const drawCir = (currPosX, currPosY) => {
+    let cx = (prevPosX + currPosX) / 2;
+    let cy = (prevPosY + currPosY) / 2;
+    let rx = (currPosX - prevPosX) / 2;
+    let ry = (currPosY - prevPosY) / 2;
+    contxt.ellipse(cx, cy, Math.abs(rx), Math.abs(ry), 0, degToRad(0), degToRad(360), false);
+    // contxt.arc(prevPosX, prevPosY, currPosX - prevPosX, degToRad(0), degToRad(360), false);
+};
+const drawLine = (currPosX, currPosY) => {
+    contxt.moveTo(prevPosX, prevPosY);
+    contxt.lineTo(currPosX, currPosY);
+}
+const drawPoly = (currPosX, currPosY) => {
+    if (currPosX == polygonSt[0] && currPosY == polygonSt[1]) {
+        ispolygon = false;
+        polygonSt = [];
+        drawLine(currPosX,currPosY);
+        return;
+    }
+    if (!ispolygon) {
+        ispolygon = true;
+        polygonSt = [prevPosX, prevPosY];
+    }
+    drawLine(currPosX, currPosY);
+    prevPosX = currPosX;
+    prevPosY = currPosY;
+    isDrawing = true;
+}
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
 });
@@ -101,19 +145,41 @@ color.addEventListener("input", () => {
     pencilColor = color.value;
     contxt.strokeStyle = pencilColor;
 });
+const setSize = () => {
+    canvas.width = window.innerWidth - 50;
+    canvas.height = window.innerHeight - 150;
+}
 const getCords = (e) => {
     if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
         var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
         x = touch.pageX;
         y = touch.pageY - 80;
     } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
-        x = e.clientX;
-        y = e.clientY - 80;
+        x = e.clientX - canvas.offsetLeft;
+        y = e.clientY - canvas.offsetTop;
     }
     return [x, y];
 }
-document.querySelector(".eraser").addEventListener("click", erase);
+const degToRad = (degrees) => {
+    return degrees * Math.PI / 180;
+}
+const updatePencil = () => {
+    contxt.strokeStyle = pencilColor;
+    contxt.lineWidth = pencilSize;
+}
+const reset = () => {
+    prevPosX = prevPosY = null;
+    isDrawing = false;
+    ispolygon = false;
+    setSize();
+}
+document.querySelector(".clear").addEventListener("click", reset);
 document.querySelector(".pencil").addEventListener("click", pencil);
+document.querySelector(".eraser").addEventListener("click", erase);
+document.querySelector(".sline").addEventListener("click", () => { select = 'line'; updatePencil(); });
+document.querySelector(".rectangle").addEventListener("click", () => { select = 'rectangle'; updatePencil(); });
+document.querySelector(".polygon").addEventListener("click", () => { select = 'polygon'; updatePencil(); });
+document.querySelector(".ellipse").addEventListener("click", () => { select = 'ellipse'; updatePencil(); });
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     // alert("touch");
@@ -126,3 +192,10 @@ if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.m
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
 }
+setSize();
+// addEventListener('resize', () => {
+//     contxt.save();
+//     canvas.width = innerWidth - 50;
+//     canvas.height = innerHeight - 150;
+//     contxt.restore();
+// });
