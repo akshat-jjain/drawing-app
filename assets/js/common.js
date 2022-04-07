@@ -126,7 +126,7 @@ const drawPoly = (currPosX, currPosY) => {
     if (currPosX == polygonSt[0] && currPosY == polygonSt[1]) {
         ispolygon = false;
         polygonSt = [];
-        drawLine(currPosX,currPosY);
+        drawLine(currPosX, currPosY);
         return;
     }
     if (!ispolygon) {
@@ -154,6 +154,7 @@ const getCords = (e) => {
         var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
         x = touch.pageX;
         y = touch.pageY - 80;
+        alert(x, y);
     } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
         x = e.clientX - canvas.offsetLeft;
         y = e.clientY - canvas.offsetTop;
@@ -166,6 +167,8 @@ const degToRad = (degrees) => {
 const updatePencil = () => {
     contxt.strokeStyle = pencilColor;
     contxt.lineWidth = pencilSize;
+    ispolygon = false;
+    isDrawing = false;
 }
 const reset = () => {
     prevPosX = prevPosY = null;
