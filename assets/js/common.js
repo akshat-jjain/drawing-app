@@ -154,7 +154,6 @@ const getCords = (e) => {
         var touch = e.touches[0] || e.changedTouches[0];
         x = touch.clientX;
         y = touch.clientY - 80;
-        alert(x, y);
     } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
         x = e.clientX - canvas.offsetLeft;
         y = e.clientY - canvas.offsetTop;
