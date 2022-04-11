@@ -16,26 +16,32 @@
             <h1>Drawing App</h1>
         </header>
         <div class="all-btn">
-            <div class="size-picker">
-                <div class="line" style="border-bottom: var(--picked-size) solid #000000;"></div>
-                <div class="size-block">
-                    <div class="line" style="border-bottom:1px solid #000000" data-width="1"> </div>
-                    <div class="line" style="border-bottom:2px solid #000000" data-width="2"> </div>
-                    <div class="line" style="border-bottom:3px solid #000000" data-width="3"> </div>
-                    <div class="line" style="border-bottom:4px solid #000000" data-width="4"> </div>
-                    <div class="line" style="border-bottom:5px solid #000000" data-width="5"> </div>
-                </div>
-            </div>
             <div class="tools">
                 <div class="tool clear fa fa-trash-o" title="Clear All"></div>
                 <div class="tool eraser fa fa-eraser" title="Eraser"></div>
                 <div class="tool pencil fa fa-pencil" title="Pencil"></div>
-                <div class="tool sline fa fa-line" title="Line"><hr></div>
-                <div class="tool rectangle fa fa-square-o" title="Rectangle"></div>
-                <div class="tool polygon fa fa-polygon" title="Polygon"></div>
-                <div class="tool ellipse fa fa-circle-o" title="Ellipse"></div>
+            </div>
+            <div class="shapes">
+                <div class="shape sline fa fa-line" title="Line">
+                    <hr>
+                </div>
+                <div class="shape rectangle fa fa-square-o" title="Rectangle"></div>
+                <div class="shape polygon fa fa-polygon" title="Polygon"></div>
+                <div class="shape ellipse fa fa-circle-o" title="Ellipse"></div>
+            </div>
+            <div class="size-picker">
+                <div class="line" style="border-bottom: var(--picked-size) solid #000000;"></div>
+                <div class="size-block">
+                    <div class="line" style="border-bottom:1px solid #000000" data-width="1"> </div>
+                    <div class="line" style="border-bottom:3px solid #000000" data-width="3"> </div>
+                    <div class="line" style="border-bottom:5px solid #000000" data-width="5"> </div>
+                    <div class="line" style="border-bottom:8px solid #000000" data-width="8"> </div>
+                    <div class="line" style="border-bottom:10px solid #000000" data-width="10"> </div>
+                </div>
             </div>
             <div class="color-picker">
+                <div class="clr selected" data-code="var(--picked-color)" style="background: var(--picked-color);">
+                </div>
                 <div class="clr" data-code="#ffffff" style="background: #ffffff;"> </div>
                 <div class="clr" data-code="#000000" style="background: #000000;"> </div>
                 <div class="clr" data-code="#00ee4f" style="background: #00ee4f;"> </div>
@@ -52,6 +58,18 @@
             <div class="saveBtn"><i class="fa fa-download"></i> Download</div>
         </div>
         <canvas id="drawing-board"></canvas>
+        <div class="bottom-box">
+           <div class="bottom-contain">
+               <div class="coordinate-box">
+                    <i class="fa fa-mouse-pointer"></i>
+                    <span class="coordinates">(0,0)</span>
+                </div>
+                <div class="canvas-size">
+                    <i class="fa fa-"> </i>
+                    <span class="size-wh"></span>
+                </div>
+           </div> 
+        </div>
     </body>
     <script src="./assets/js/common.js"></script>
 

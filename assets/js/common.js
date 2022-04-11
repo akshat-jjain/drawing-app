@@ -1,6 +1,8 @@
 const canvas = document.getElementById("drawing-board");
-const contxt = canvas.getContext("2d");
+const context = canvas.getContext("2d");
 const color = document.getElementById("multi-color");
+const coord = document.querySelector(".coordinates");
+const sizewh = document.querySelector(".size-wh");
 let clrs = document.querySelectorAll(".clr");
 clrs = Array.from(clrs);
 let lines = document.querySelectorAll(".line");
@@ -14,15 +16,14 @@ let pencilSize = 1;
 let eraserSize = 5;
 let pencilColor = "#000000";
 let canvasColor = "#ffffff";
-
 let prevPosX = null;
 let prevPosY = null;
 
 clrs.forEach(clr => {
     clr.addEventListener("click", () => {
         pencilColor = clr.dataset.code;
-        contxt.strokeStyle = pencilColor;
-        contxt.lineWidth = pencilSize;
+        context.strokeStyle = pencilColor;
+        context.lineWidth = pencilSize;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor;
     });
 });
@@ -30,12 +31,12 @@ clrs.forEach(clr => {
 lines.forEach(line => {
     line.addEventListener("click", () => {
         pencilSize = line.dataset.width;
-        contxt.lineWidth = pencilSize;
-        contxt.strokeStyle = pencilColor;
+        context.lineWidth = pencilSize;
+        context.strokeStyle = pencilColor;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor;
     });
 });
-contxt.beginPath();
+context.beginPath();
 
 const startDrawing = (e) => {
     isDrawing = true;
@@ -48,6 +49,7 @@ const startDrawing = (e) => {
     }
 };
 const draw = (e) => {
+    coord.innerHTML = `(${getCords(e)}px)`;
     if (prevPosX == null || prevPosY == null || !isDrawing) {
         [prevPosX, prevPosY] = getCords(e);
         return
@@ -57,10 +59,11 @@ const draw = (e) => {
     } else {
         let [currPosX, currPosY] = getCords(e);
         // canvas.style.cursor = 'url("https://img.icons8.com/ios/50/000000/pencil-tip.png"), auto';
-        contxt.beginPath();
-        contxt.moveTo(prevPosX, prevPosY);
-        contxt.lineTo(currPosX, currPosY);
-        contxt.stroke();
+        context.beginPath();
+        context.lineJoin = "round";
+        context.moveTo(prevPosX, prevPosY);
+        context.lineTo(currPosX, currPosY);
+        context.stroke();
 
         prevPosX = currPosX;
         prevPosY = currPosY;
@@ -69,7 +72,7 @@ const draw = (e) => {
 const stopDrawing = (e) => {
     isDrawing = false;
     if (shapes.includes(select)) {
-        contxt.beginPath();
+        context.beginPath();
         let [currPosX, currPosY] = getCords(e);
         switch (select) {
             case 'rectangle':
@@ -85,7 +88,8 @@ const stopDrawing = (e) => {
                 drawPoly(currPosX, currPosY);
                 break;
         }
-        contxt.stroke();
+        context.lineJoin = "round";
+        context.stroke();
     }
     // canvas.style.cursor = 'pointer';
 };
@@ -99,8 +103,8 @@ const saveImg = () => {
     a.remove();
 };
 const erase = () => {
-    contxt.strokeStyle = canvasColor;
-    contxt.lineWidth = eraserSize;
+    context.strokeStyle = canvasColor;
+    context.lineWidth = eraserSize;
     select = "eraser";
 };
 const pencil = () => {
@@ -108,22 +112,22 @@ const pencil = () => {
     select = "pencil";
 };
 const drawRect = (currPosX, currPosY) => {
-    contxt.rect(prevPosX, prevPosY, currPosX - prevPosX, currPosY - prevPosY);
+    context.rect(prevPosX, prevPosY, currPosX - prevPosX, currPosY - prevPosY);
 };
 const drawCir = (currPosX, currPosY) => {
     let cx = (prevPosX + currPosX) / 2;
     let cy = (prevPosY + currPosY) / 2;
     let rx = (currPosX - prevPosX) / 2;
     let ry = (currPosY - prevPosY) / 2;
-    contxt.ellipse(cx, cy, Math.abs(rx), Math.abs(ry), 0, degToRad(0), degToRad(360), false);
-    // contxt.arc(prevPosX, prevPosY, currPosX - prevPosX, degToRad(0), degToRad(360), false);
+    context.ellipse(cx, cy, Math.abs(rx), Math.abs(ry), 0, degToRad(0), degToRad(360), false);
+    // context.arc(prevPosX, prevPosY, currPosX - prevPosX, degToRad(0), degToRad(360), false);
 };
 const drawLine = (currPosX, currPosY) => {
-    contxt.moveTo(prevPosX, prevPosY);
-    contxt.lineTo(currPosX, currPosY);
+    context.moveTo(prevPosX, prevPosY);
+    context.lineTo(currPosX, currPosY);
 }
 const drawPoly = (currPosX, currPosY) => {
-    if (currPosX == polygonSt[0] && currPosY == polygonSt[1]) {
+    if (currPosX - polygonSt[0] <= 2 && currPosY - polygonSt[1] <= 2) {
         ispolygon = false;
         polygonSt = [];
         drawLine(currPosX, currPosY);
@@ -143,11 +147,12 @@ document.getElementById("color-chooser").addEventListener("click", () => {
 });
 color.addEventListener("input", () => {
     pencilColor = color.value;
-    contxt.strokeStyle = pencilColor;
+    context.strokeStyle = pencilColor;
 });
 const setSize = () => {
     canvas.width = window.innerWidth - 50;
-    canvas.height = window.innerHeight - 150;
+    canvas.height = window.innerHeight - 200;
+    sizewh.innerHTML = `${canvas.width} x  ${canvas.height}px`;
 }
 const getCords = (e) => {
     if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
@@ -164,8 +169,8 @@ const degToRad = (degrees) => {
     return degrees * Math.PI / 180;
 }
 const updatePencil = () => {
-    contxt.strokeStyle = pencilColor;
-    contxt.lineWidth = pencilSize;
+    context.strokeStyle = pencilColor;
+    context.lineWidth = pencilSize;
     ispolygon = false;
     isDrawing = false;
 }
@@ -184,20 +189,19 @@ document.querySelector(".polygon").addEventListener("click", () => { select = 'p
 document.querySelector(".ellipse").addEventListener("click", () => { select = 'ellipse'; updatePencil(); });
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
-    // alert("touch");
     canvas.addEventListener("touchstart", startDrawing);
     canvas.addEventListener("touchmove", draw);
     canvas.addEventListener("touchend", stopDrawing);
 } else {
-    // alert("No touch");
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
 }
 setSize();
 // addEventListener('resize', () => {
-//     contxt.save();
+//     context.save();
 //     canvas.width = innerWidth - 50;
 //     canvas.height = innerHeight - 150;
-//     contxt.restore();
+//     context.restore();
 // });
+canvas.addEventListener("mouseout", () => { coord.innerHTML = ""; });
