@@ -49,7 +49,8 @@ const startDrawing = (e) => {
     }
 };
 const draw = (e) => {
-    coord.innerHTML = `(${getCords(e)}px)`;
+    let [x, y] = getCords(e);
+    coord.innerHTML = `(${parseFloat(x).toFixed(2)},${parseFloat(y).toFixed(2)}px)`;
     if (prevPosX == null || prevPosY == null || !isDrawing) {
         [prevPosX, prevPosY] = getCords(e);
         return
