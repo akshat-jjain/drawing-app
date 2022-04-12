@@ -9,7 +9,7 @@ let lines = document.querySelectorAll(".line");
 lines = Array.from(lines);
 let ispolygon = false;
 let polygonSt = [];
-const shapes = ['rectangle', 'line', 'ellipse', 'polygon'];
+const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle'];
 let isDrawing = false;
 let select = "pencil";
 let pencilSize = 1;
@@ -18,6 +18,7 @@ let pencilColor = "#000000";
 let canvasColor = "#ffffff";
 let prevPosX = null;
 let prevPosY = null;
+context.lineCap = "round";
 
 clrs.forEach(clr => {
     clr.addEventListener("click", () => {
@@ -62,6 +63,7 @@ const draw = (e) => {
         // canvas.style.cursor = 'url("https://img.icons8.com/ios/50/000000/pencil-tip.png"), auto';
         context.beginPath();
         context.lineJoin = "round";
+        context.lineCap = "round";
         context.moveTo(prevPosX, prevPosY);
         context.lineTo(currPosX, currPosY);
         context.stroke();
@@ -74,6 +76,8 @@ const stopDrawing = (e) => {
     isDrawing = false;
     if (shapes.includes(select)) {
         context.beginPath();
+        context.lineCap = "round";
+        context.lineJoin = "round";
         let [currPosX, currPosY] = getCords(e);
         switch (select) {
             case 'rectangle':
@@ -88,8 +92,13 @@ const stopDrawing = (e) => {
             case 'polygon':
                 drawPoly(currPosX, currPosY);
                 break;
+            case 'triangle':
+                drawTri(currPosX, currPosY);
+                break;
+            case 'right-triangle':
+                drawRiTri(currPosX, currPosY);
+                break;
         }
-        context.lineJoin = "round";
         context.stroke();
     }
     // canvas.style.cursor = 'pointer';
@@ -143,6 +152,31 @@ const drawPoly = (currPosX, currPosY) => {
     prevPosY = currPosY;
     isDrawing = true;
 }
+const drawTri = (currPosX, currPosY) => {
+    if (prevPosY > currPosY) {
+        [prevPosY, currPosY] = [currPosY, prevPosY];
+        [prevPosX, currPosX] = [currPosX, prevPosX];
+    }
+    let midX = (prevPosX + currPosX) / 2;
+    context.beginPath();
+    context.moveTo(prevPosX, currPosY);
+    context.lineTo(currPosX, currPosY);
+    context.lineTo(midX, prevPosY);
+    context.closePath();
+};
+const drawRiTri = (currPosX, currPosY) => {
+    if (prevPosY > currPosY) {
+        [prevPosY, currPosY] = [currPosY, prevPosY];
+    }
+    if (prevPosX > currPosX) {
+        [prevPosX, currPosX] = [currPosX, prevPosX];
+    }
+    context.beginPath();
+    context.moveTo(prevPosX, prevPosY);
+    context.lineTo(prevPosX, currPosY);
+    context.lineTo(currPosX, currPosY);
+    context.closePath();
+};
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
 });
@@ -158,8 +192,8 @@ const setSize = () => {
 const getCords = (e) => {
     if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
         var touch = e.touches[0] || e.changedTouches[0];
-        x = touch.clientX;
-        y = touch.clientY - 80;
+        x = touch.clientX - canvas.offsetLeft;
+        y = touch.clientY - canvas.offsetTop;
     } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
         x = e.clientX - canvas.offsetLeft;
         y = e.clientY - canvas.offsetTop;
@@ -180,6 +214,8 @@ const reset = () => {
     isDrawing = false;
     ispolygon = false;
     setSize();
+    context.strokeStyle = pencilColor;
+    context.lineWidth = pencilSize;
 }
 document.querySelector(".clear").addEventListener("click", reset);
 document.querySelector(".pencil").addEventListener("click", pencil);
@@ -188,6 +224,8 @@ document.querySelector(".sline").addEventListener("click", () => { select = 'lin
 document.querySelector(".rectangle").addEventListener("click", () => { select = 'rectangle'; updatePencil(); });
 document.querySelector(".polygon").addEventListener("click", () => { select = 'polygon'; updatePencil(); });
 document.querySelector(".ellipse").addEventListener("click", () => { select = 'ellipse'; updatePencil(); });
+document.querySelector(".triangle").addEventListener("click", () => { select = 'triangle'; updatePencil(); });
+document.querySelector(".right-triangle").addEventListener("click", () => { select = 'right-triangle'; updatePencil(); });
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     canvas.addEventListener("touchstart", startDrawing);

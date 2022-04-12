@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="./assets/css/common.css">
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </head>
 
     <body>
@@ -22,12 +23,12 @@
                 <div class="tool pencil fa fa-pencil" title="Pencil"></div>
             </div>
             <div class="shapes">
-                <div class="shape sline fa fa-line" title="Line">
-                    <hr>
-                </div>
+                <div class="shape sline material-icons" title="Line">maximize</div>
                 <div class="shape rectangle fa fa-square-o" title="Rectangle"></div>
                 <div class="shape polygon fa fa-polygon" title="Polygon"></div>
                 <div class="shape ellipse fa fa-circle-o" title="Ellipse"></div>
+                <div class="shape triangle material-icons" title="Triangle">change_history</div>
+                <div class="shape right-triangle fa fa-right-triangle" title="Right Triangle"></div>
             </div>
             <div class="size-picker">
                 <div class="line" style="border-bottom: var(--picked-size) solid #000000;"></div>
@@ -59,8 +60,8 @@
         </div>
         <canvas id="drawing-board"></canvas>
         <div class="bottom-box">
-           <div class="bottom-contain">
-               <div class="coordinate-box">
+            <div class="bottom-contain">
+                <div class="coordinate-box">
                     <i class="fa fa-mouse-pointer"></i>
                     <span class="coordinates">(0,0)</span>
                 </div>
@@ -68,7 +69,7 @@
                     <i class="fa fa-"> </i>
                     <span class="size-wh"></span>
                 </div>
-           </div> 
+            </div>
         </div>
     </body>
     <script src="./assets/js/common.js"></script>
