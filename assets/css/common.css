@@ -117,12 +117,13 @@ canvas {
 
 .tool,
 .shape {
+    flex: 0 0 auto;
     width: 30px;
     height: 30px;
     /* border: 1px solid #000000; */
     cursor: pointer;
     text-align: center;
-    padding: 6%;
+    /* padding: 6%; */
 }
 
 .bottom-contain {
@@ -139,6 +140,10 @@ canvas {
     flex: 0 0 auto;
     min-width: 25%;
     border-right: 1px solid;
+}
+
+.diamond {
+    transform: rotate(45deg);
 }
 
 @media (max-width:800px) {

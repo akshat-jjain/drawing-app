@@ -9,7 +9,7 @@ let lines = document.querySelectorAll(".line");
 lines = Array.from(lines);
 let ispolygon = false;
 let polygonSt = [];
-const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle'];
+const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond'];
 let isDrawing = false;
 let select = "pencil";
 let pencilSize = 1;
@@ -67,7 +67,6 @@ const draw = (e) => {
         context.moveTo(prevPosX, prevPosY);
         context.lineTo(currPosX, currPosY);
         context.stroke();
-
         prevPosX = currPosX;
         prevPosY = currPosY;
     }
@@ -97,6 +96,9 @@ const stopDrawing = (e) => {
                 break;
             case 'right-triangle':
                 drawRiTri(currPosX, currPosY);
+                break;
+            case 'diamond':
+                drawDiamond(currPosX, currPosY);
                 break;
         }
         context.stroke();
@@ -177,12 +179,24 @@ const drawRiTri = (currPosX, currPosY) => {
     context.lineTo(currPosX, currPosY);
     context.closePath();
 };
+const drawDiamond = (currPosX, currPosY) => {
+    let midX = (prevPosX + currPosX) / 2;
+    let midY = (prevPosY + currPosY) / 2;
+    context.beginPath();
+    context.moveTo(prevPosX, midY);
+    context.lineTo(midX, currPosY);
+    context.lineTo(currPosX, midY);
+    context.lineTo(midX, prevPosY);
+    context.closePath();
+};
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
 });
 color.addEventListener("input", () => {
     pencilColor = color.value;
     context.strokeStyle = pencilColor;
+    context.lineWidth = pencilSize;
+    document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor;
 });
 const setSize = () => {
     canvas.width = window.innerWidth - 50;
@@ -226,6 +240,7 @@ document.querySelector(".polygon").addEventListener("click", () => { select = 'p
 document.querySelector(".ellipse").addEventListener("click", () => { select = 'ellipse'; updatePencil(); });
 document.querySelector(".triangle").addEventListener("click", () => { select = 'triangle'; updatePencil(); });
 document.querySelector(".right-triangle").addEventListener("click", () => { select = 'right-triangle'; updatePencil(); });
+document.querySelector(".diamond").addEventListener("click", () => { select = 'diamond'; updatePencil(); });
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     canvas.addEventListener("touchstart", startDrawing);
@@ -244,3 +259,10 @@ setSize();
 //     context.restore();
 // });
 canvas.addEventListener("mouseout", () => { coord.innerHTML = ""; });
+// canvas.onwheel = (e) => {
+//     let factor = 1.5;
+//     let [x, y] = getCords(e);
+//     context.translate(x, y);
+//     context.scale(factor, factor);
+//     context.translate(-x, -y);
+// }
