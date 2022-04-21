@@ -23,10 +23,6 @@ canvas {
     max-height: 100%;
 }
 
-.selected {
-    pointer-events: none;
-    border: 1px solid;
-}
 
 .all-btn {
     width: 100%;
@@ -144,6 +140,29 @@ canvas {
 
 .diamond {
     transform: rotate(45deg);
+}
+
+.sline {
+    background: #000000;
+    padding: 0.6px;
+    border-radius: 5px;
+    height: 1px;
+    transform: rotate(45deg);
+}
+
+.right-triangle {
+    /* width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 15px 0 0 15px;
+    border-color: transparent transparent transparent #000000; */
+    transform: rotate(45deg);
+}
+
+.selected {
+    pointer-events: none;
+    border: 1px solid;
+    border-radius: 0;
 }
 
 @media (max-width:800px) {
