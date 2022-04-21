@@ -7,8 +7,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Drawing</title>
         <link rel="stylesheet" href="./assets/css/common.css">
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+            integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link
             href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
             rel="stylesheet">
@@ -21,7 +22,7 @@
         </header>
         <div class="all-btn">
             <div class="tools">
-                <div class="tool clear fa fa-trash-o" title="Clear All"></div>
+                <div class="tool clear fa fa-trash-alt" title="Clear All"></div>
                 <div class="tool eraser fa fa-eraser" title="Eraser"></div>
                 <div class="tool pencil fa fa-pencil" title="Pencil"></div>
             </div>
@@ -35,6 +36,10 @@
                 <div class="shape diamond material-icons-outlined" title="Diamond">square</div>
                 <div class="shape pentagon material-icons-outlined" title="Pentagon">pentagon</div>
                 <div class="shape hexagon material-icons-outlined" title="Hexagon">hexagon</div>
+                <div class="shape arrow-right fa fa-arrow-right" title="Arrow Right"></div>
+                <div class="shape arrow-left fa fa-arrow-left" title="Arrow Left"></div>
+                <div class="shape arrow-top fa fa-arrow-up" title="Arrow Top"></div>
+                <div class="shape arrow-bottom fa fa-arrow-down" title="Arrow Bottom"></div>
             </div>
             <div class="size-picker">
                 <div class="line" style="border-bottom: var(--picked-size) solid #000000;"></div>
@@ -50,7 +55,8 @@
                 <div class="selected-color">
                     <div class="clr selected" data-code="var(--picked-color)" style="background: var(--picked-color);">
                     </div>
-                    <div class="clr selected" data-code="var(--secondary-color)" style="background: var(--secondary-color);">
+                    <div class="clr selected" data-code="var(--secondary-color)"
+                        style="background: var(--secondary-color);">
                     </div>
                 </div>
                 <div class="non-selected">

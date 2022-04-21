@@ -9,7 +9,7 @@ let lines = document.querySelectorAll(".line");
 lines = Array.from(lines);
 let ispolygon = false;
 let polygonSt = [];
-const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond', 'pentagon', 'hexagon'];
+const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond', 'pentagon', 'hexagon', 'arrow-right', 'arrow-left', 'arrow-top', 'arrow-bottom'];
 let isDrawing = false;
 let select = "pencil";
 let pencilSize = 1;
@@ -116,6 +116,19 @@ const stopDrawing = (e) => {
             case 'hexagon':
                 drawGon(currPosX, currPosY, 6);
                 break;
+            case 'arrow-right':
+                arrows(currPosX, currPosY, 1);
+                break;
+            case 'arrow-left':
+                arrows(currPosX, currPosY, 2);
+                break;
+            case 'arrow-top':
+                arrows(currPosX, currPosY, 3);
+                break;
+            case 'arrow-bottom':
+                arrows(currPosX, currPosY, 4);
+                break;
+
         }
         context.stroke();
     }
@@ -221,6 +234,53 @@ const drawGon = (currPosX, currPosY, sides) => {
     context.translate(-x, -y);
     context.stroke();
 }
+const arrows = (currPosX, currPosY, type) => {
+    if (prevPosY > currPosY) {
+        [prevPosY, currPosY] = [currPosY, prevPosY];
+    }
+    if (prevPosX > currPosX) {
+        [prevPosX, currPosX] = [currPosX, prevPosX];
+    }
+    let midX = (currPosX + prevPosX) / 2;
+    let midY = (currPosY + prevPosY) / 2;
+    let heightX = Math.abs(currPosX - prevPosX);
+    let heightY = Math.abs(currPosY - prevPosY);
+    context.beginPath();
+    if (type == 1) {
+        context.moveTo(midX, prevPosY);
+        context.lineTo(currPosX, midY);
+        context.lineTo(midX, currPosY);
+        context.lineTo(midX, currPosY - heightY / 4);
+        context.lineTo(prevPosX, currPosY - heightY / 4);
+        context.lineTo(prevPosX, prevPosY + heightY / 4);
+        context.lineTo(midX, prevPosY + heightY / 4);
+    } else if (type == 2) {
+        context.moveTo(midX, prevPosY);
+        context.lineTo(prevPosX, midY);
+        context.lineTo(midX, currPosY);
+        context.lineTo(midX, currPosY - heightY / 4);
+        context.lineTo(currPosX, currPosY - heightY / 4);
+        context.lineTo(currPosX, prevPosY + heightY / 4);
+        context.lineTo(midX, prevPosY + heightY / 4);
+    } else if (type == 3) {
+        context.moveTo(midX, prevPosY);
+        context.lineTo(currPosX, midY);
+        context.lineTo(currPosX - heightX / 4, midY);
+        context.lineTo(currPosX - heightX / 4, currPosY);
+        context.lineTo(prevPosX + heightX / 4, currPosY);
+        context.lineTo(prevPosX + heightX / 4, midY);
+        context.lineTo(prevPosX, midY);
+    } else {
+        context.moveTo(prevPosX + heightX / 4, prevPosY);
+        context.lineTo(currPosX - heightX / 4, prevPosY);
+        context.lineTo(currPosX - heightX / 4, midY);
+        context.lineTo(currPosX, midY);
+        context.lineTo(midX, currPosY);
+        context.lineTo(prevPosX, midY);
+        context.lineTo(prevPosX + heightX / 4, midY);
+    }
+    context.closePath();
+}
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
     press = 0;
@@ -288,6 +348,10 @@ document.querySelector(".right-triangle").addEventListener("click", () => { sele
 document.querySelector(".diamond").addEventListener("click", () => { select = 'diamond'; updatePencil(); });
 document.querySelector(".pentagon").addEventListener("click", () => { select = 'pentagon'; updatePencil(); });
 document.querySelector(".hexagon").addEventListener("click", () => { select = 'hexagon'; updatePencil(); });
+document.querySelector(".arrow-right").addEventListener("click", () => { select = 'arrow-right'; updatePencil(); });
+document.querySelector(".arrow-left").addEventListener("click", () => { select = 'arrow-left'; updatePencil(); });
+document.querySelector(".arrow-top").addEventListener("click", () => { select = 'arrow-top'; updatePencil(); });
+document.querySelector(".arrow-bottom").addEventListener("click", () => { select = 'arrow-bottom'; updatePencil(); });
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     canvas.addEventListener("touchstart", startDrawing);
