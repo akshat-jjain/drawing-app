@@ -9,12 +9,14 @@ let lines = document.querySelectorAll(".line");
 lines = Array.from(lines);
 let ispolygon = false;
 let polygonSt = [];
-const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond'];
+const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond', 'pentagon', 'hexagon'];
 let isDrawing = false;
 let select = "pencil";
 let pencilSize = 1;
 let eraserSize = 5;
 let pencilColor = "#000000";
+let secondaryColor = "#ffffff";
+let press = 0;
 let canvasColor = "#ffffff";
 let prevPosX = null;
 let prevPosY = null;
@@ -25,16 +27,22 @@ clrs.forEach(clr => {
         pencilColor = clr.dataset.code;
         context.strokeStyle = pencilColor;
         context.lineWidth = pencilSize;
-        document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor;
+        document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
     });
 });
-
+clrs.forEach(clr => {
+    clr.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        secondaryColor = clr.dataset.code;
+        document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
+    });
+});
 lines.forEach(line => {
     line.addEventListener("click", () => {
         pencilSize = line.dataset.width;
         context.lineWidth = pencilSize;
         context.strokeStyle = pencilColor;
-        document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor;
+        document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
     });
 });
 context.beginPath();
@@ -50,6 +58,8 @@ const startDrawing = (e) => {
     }
 };
 const draw = (e) => {
+    e.preventDefault();
+    context.strokeStyle = (e.buttons == 2) ? secondaryColor : pencilColor;
     let [x, y] = getCords(e);
     coord.innerHTML = `(${parseFloat(x).toFixed(2)},${parseFloat(y).toFixed(2)}px)`;
     if (prevPosX == null || prevPosY == null || !isDrawing) {
@@ -99,6 +109,12 @@ const stopDrawing = (e) => {
                 break;
             case 'diamond':
                 drawDiamond(currPosX, currPosY);
+                break;
+            case 'pentagon':
+                drawGon(currPosX, currPosY, 5);
+                break;
+            case 'hexagon':
+                drawGon(currPosX, currPosY, 6);
                 break;
         }
         context.stroke();
@@ -189,14 +205,42 @@ const drawDiamond = (currPosX, currPosY) => {
     context.lineTo(midX, prevPosY);
     context.closePath();
 };
+const drawGon = (currPosX, currPosY, sides) => {
+    var rx = (Math.abs(currPosX - prevPosX)) / 2;
+    var ry = (Math.abs(currPosY - prevPosY)) / 2;
+    var radius = Math.max(rx, ry);
+    var x = (currPosX + prevPosX) / 2;
+    var y = (currPosY + prevPosY) / 2;
+    var angle = 2 * Math.PI / sides;
+    context.beginPath();
+    context.translate(x, y);
+    context.moveTo(radius, 0);
+    for (var i = 1; i <= sides; i++) {
+        context.lineTo(radius * Math.cos(i * angle), radius * Math.sin(i * angle));
+    }
+    context.translate(-x, -y);
+    context.stroke();
+}
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
+    press = 0;
+});
+document.getElementById("color-chooser").addEventListener("contextmenu", () => {
+    color.click();
+    press = 2;
 });
 color.addEventListener("input", () => {
-    pencilColor = color.value;
-    context.strokeStyle = pencilColor;
+    let newColor;
+    if (press == 2) {
+        secondaryColor = color.value || secondaryColor;
+        newColor = secondaryColor;
+    } else {
+        pencilColor = color.value || pencilColor;
+        newColor = pencilColor;
+    }
+    context.strokeStyle = newColor;
     context.lineWidth = pencilSize;
-    document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor;
+    document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
 });
 const setSize = () => {
     canvas.width = window.innerWidth - 50;
@@ -231,6 +275,7 @@ const reset = () => {
     context.strokeStyle = pencilColor;
     context.lineWidth = pencilSize;
 }
+canvas.addEventListener("contextmenu", (e) => { e.preventDefault() });
 document.querySelector(".clear").addEventListener("click", reset);
 document.querySelector(".pencil").addEventListener("click", pencil);
 document.querySelector(".eraser").addEventListener("click", erase);
@@ -241,6 +286,8 @@ document.querySelector(".ellipse").addEventListener("click", () => { select = 'e
 document.querySelector(".triangle").addEventListener("click", () => { select = 'triangle'; updatePencil(); });
 document.querySelector(".right-triangle").addEventListener("click", () => { select = 'right-triangle'; updatePencil(); });
 document.querySelector(".diamond").addEventListener("click", () => { select = 'diamond'; updatePencil(); });
+document.querySelector(".pentagon").addEventListener("click", () => { select = 'pentagon'; updatePencil(); });
+document.querySelector(".hexagon").addEventListener("click", () => { select = 'hexagon'; updatePencil(); });
 document.querySelector(".saveBtn").addEventListener("click", saveImg);
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     canvas.addEventListener("touchstart", startDrawing);

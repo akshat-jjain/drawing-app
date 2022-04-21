@@ -33,6 +33,8 @@
                 <div class="shape triangle material-icons" title="Triangle">change_history</div>
                 <div class="shape right-triangle material-icons-outlined" title="Right Triangle"></div>
                 <div class="shape diamond material-icons-outlined" title="Diamond">square</div>
+                <div class="shape pentagon material-icons-outlined" title="Pentagon">pentagon</div>
+                <div class="shape hexagon material-icons-outlined" title="Hexagon">hexagon</div>
             </div>
             <div class="size-picker">
                 <div class="line" style="border-bottom: var(--picked-size) solid #000000;"></div>
@@ -45,19 +47,25 @@
                 </div>
             </div>
             <div class="color-picker">
-                <div class="clr selected" data-code="var(--picked-color)" style="background: var(--picked-color);">
+                <div class="selected-color">
+                    <div class="clr selected" data-code="var(--picked-color)" style="background: var(--picked-color);">
+                    </div>
+                    <div class="clr selected" data-code="var(--secondary-color)" style="background: var(--secondary-color);">
+                    </div>
                 </div>
-                <div class="clr" data-code="#ffffff" style="background: #ffffff;"> </div>
-                <div class="clr" data-code="#000000" style="background: #000000;"> </div>
-                <div class="clr" data-code="#00ee4f" style="background: #00ee4f;"> </div>
-                <div class="clr" data-code="#ffaa00" style="background: #ffaa00;"> </div>
-                <div class="clr" data-code="#c1aaff" style="background: #c1aaff;"> </div>
-                <div class="clr" data-code="#ddaac2" style="background: #ddaac2;"> </div>
-                <div class="clr" data-code="#ccffdd" style="background: #ccffdd;"> </div>
-                <div class="clr" data-code="#eeddcc" style="background: #eeddcc;"> </div>
-                <div class="clr" data-code="#00ccee" style="background: #00ccee;"> </div>
-                <div class="clr" data-code="#00eedd" style="background: #00eedd;"> </div>
-                <div class="clr" data-code="" id="color-chooser"> </div>
+                <div class="non-selected">
+                    <div class="clr" data-code="#ffffff" style="background: #ffffff;"> </div>
+                    <div class="clr" data-code="#000000" style="background: #000000;"> </div>
+                    <div class="clr" data-code="#00ee4f" style="background: #00ee4f;"> </div>
+                    <div class="clr" data-code="#ffaa00" style="background: #ffaa00;"> </div>
+                    <div class="clr" data-code="#c1aaff" style="background: #c1aaff;"> </div>
+                    <div class="clr" data-code="#ddaac2" style="background: #ddaac2;"> </div>
+                    <div class="clr" data-code="#ccffdd" style="background: #ccffdd;"> </div>
+                    <div class="clr" data-code="#eeddcc" style="background: #eeddcc;"> </div>
+                    <div class="clr" data-code="#00ccee" style="background: #00ccee;"> </div>
+                    <div class="clr" data-code="#00eedd" style="background: #00eedd;"> </div>
+                    <div class="clr" data-code="" id="color-chooser"> </div>
+                </div>
                 <input type="color" name="" id="multi-color" style="display: none;" />
             </div>
             <div class="saveBtn"><i class="fa fa-download"></i> Download</div>

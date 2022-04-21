@@ -2,6 +2,7 @@
     --font-size: 14px;
     --picked-color: #000000;
     --picked-size: 1px;
+    --secondary-color: #ffffff;
 }
 
 * {
@@ -48,6 +49,10 @@ canvas {
     border-radius: 3px;
     margin: 5px;
     max-width: 25%;
+}
+
+.color-picker {
+    flex-wrap: nowrap;
 }
 
 .bottom-box {
@@ -150,19 +155,23 @@ canvas {
     transform: rotate(45deg);
 }
 
-.right-triangle {
-    /* width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 15px 0 0 15px;
-    border-color: transparent transparent transparent #000000; */
-    transform: rotate(45deg);
+.pentagon {
+    transform: rotate(-55deg);
 }
 
 .selected {
     pointer-events: none;
     border: 1px solid;
     border-radius: 0;
+}
+
+.selected-color {
+    height: 100%;
+}
+
+.non-selected {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 @media (max-width:800px) {
