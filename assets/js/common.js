@@ -7,13 +7,16 @@ let clrs = document.querySelectorAll(".clr");
 clrs = Array.from(clrs);
 let lines = document.querySelectorAll(".line");
 lines = Array.from(lines);
+let feaHeader = document.querySelectorAll(".fea-header");
+feaHeader = Array.from(feaHeader);
 let ispolygon = false;
 let polygonSt = [];
 const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond', 'pentagon', 'hexagon', 'arrow-right', 'arrow-left', 'arrow-top', 'arrow-bottom'];
 let isDrawing = false;
 let select = "pencil";
 let pencilSize = 1;
-let eraserSize = 5;
+let eraserSize = 8;
+let isErasing = false;
 let pencilColor = "#000000";
 let secondaryColor = "#ffffff";
 let press = 0;
@@ -27,6 +30,7 @@ clrs.forEach(clr => {
         pencilColor = clr.dataset.code;
         context.strokeStyle = pencilColor;
         context.lineWidth = pencilSize;
+        isErasing = false;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
     });
 });
@@ -34,6 +38,7 @@ clrs.forEach(clr => {
     clr.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         secondaryColor = clr.dataset.code;
+        isErasing = false;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
     });
 });
@@ -42,12 +47,27 @@ lines.forEach(line => {
         pencilSize = line.dataset.width;
         context.lineWidth = pencilSize;
         context.strokeStyle = pencilColor;
+        isErasing = false;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
     });
 });
+feaHeader.forEach(headers => {
+    headers.addEventListener("click", () => {
+        fixActive();
+        let active = headers.dataset.name;
+        document.querySelector(`.${active}`).setAttribute("style", "display:flex");
+    });
+});
+const fixActive = () => {
+    feaHeader.forEach(head => {
+        let name = head.dataset.name;
+        document.querySelector(`.${name}`).removeAttribute("style");
+    })
+};
 context.beginPath();
 
 const startDrawing = (e) => {
+    fixActive();
     isDrawing = true;
     // canvas.style.cursor = 'url("https://img.icons8.com/ios/50/000000/pencil-tip.png"), auto';
     if (ispolygon) {
@@ -60,12 +80,16 @@ const startDrawing = (e) => {
 const draw = (e) => {
     e.preventDefault();
     context.strokeStyle = (e.buttons == 2) ? secondaryColor : pencilColor;
+    if (isErasing && select == "eraser") {
+        context.strokeStyle = canvasColor;
+    }
     let [x, y] = getCords(e);
     coord.innerHTML = `(${parseFloat(x).toFixed(2)},${parseFloat(y).toFixed(2)}px)`;
     if (prevPosX == null || prevPosY == null || !isDrawing) {
         [prevPosX, prevPosY] = getCords(e);
         return
     }
+    fixActive();
     if (shapes.includes(select)) {
         return;
     } else {
@@ -82,6 +106,7 @@ const draw = (e) => {
     }
 };
 const stopDrawing = (e) => {
+    fixActive();
     isDrawing = false;
     if (shapes.includes(select)) {
         context.beginPath();
@@ -136,6 +161,7 @@ const stopDrawing = (e) => {
 };
 
 const saveImg = () => {
+    fixActive();
     let drawing = canvas.toDataURL("imag/png");
     let a = document.createElement("a");
     a.href = drawing;
@@ -147,10 +173,12 @@ const erase = () => {
     context.strokeStyle = canvasColor;
     context.lineWidth = eraserSize;
     select = "eraser";
+    isErasing = true;
 };
 const pencil = () => {
     updatePencil();
     select = "pencil";
+    isErasing = false;
 };
 const drawRect = (currPosX, currPosY) => {
     context.rect(prevPosX, prevPosY, currPosX - prevPosX, currPosY - prevPosY);
@@ -304,7 +332,7 @@ color.addEventListener("input", () => {
 });
 const setSize = () => {
     canvas.width = window.innerWidth - 50;
-    canvas.height = window.innerHeight - 200;
+    canvas.height = window.innerHeight - 210;
     sizewh.innerHTML = `${canvas.width} x  ${canvas.height}px`;
 }
 const getCords = (e) => {

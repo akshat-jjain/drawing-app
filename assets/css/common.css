@@ -17,23 +17,79 @@ body {
 }
 
 canvas {
-    border: 1px solid #000000;
+    display: block;
+    margin: auto;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
     cursor: auto;
     background: #ffffff;
     max-width: 100%;
     max-height: 100%;
 }
 
+header {
+    width: 100%;
+    padding: 0.5em;
+    background: #eef4f9;
+}
+
+main {
+    background: #f8f8f8;
+}
+
+.header-option {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.opt {
+    width: 40px;
+    height: 30px;
+    max-height: 30px;
+    border: 1px solid #e4eaee;
+    text-align: center;
+    /* padding: 1%; */
+    border-radius: 5px;
+    cursor: pointer;
+}
 
 .all-btn {
     width: 100%;
-    height: 125px;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-content: space-around;
-    align-items: center;
     justify-content: flex-start;
+    align-items: flex-end;
+    max-height: 125px;
+    background: #f9f9f9;
+    border: 1px solid #ebebeb;
+}
+
+.fea-header {
+    display: none;
+    width: 60px;
+    text-align: center;
+    border: 1px solid #ebebeb;
+    /* height: 150px; */
+    max-height: 150px;
+    padding: 1%;
+}
+
+.fea-name {
+    width: 100%;
+    text-align: center;
+}
+
+#size-box {
+    display: flex;
+    flex-direction: column;
+    min-height: 70px;
 }
 
 .color-picker,
@@ -45,14 +101,27 @@ canvas {
     align-content: space-around;
     align-items: center;
     justify-content: flex-start;
-    border: 1px solid;
     border-radius: 3px;
-    margin: 5px;
     max-width: 25%;
+    border: 1px solid #ebebeb;
+    max-height: 150px;
+    padding: 1%;
 }
 
 .color-picker {
     flex-wrap: nowrap;
+    flex-direction: column;
+}
+
+.color-box {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+
 }
 
 .bottom-box {
@@ -65,12 +134,6 @@ canvas {
     border: 1px solid;
 }
 
-.saveBtn {
-    background: #1e90ff;
-    padding: 1%;
-    border-radius: 5px;
-    cursor: pointer;
-}
 
 .clr {
     min-width: 20px;
@@ -91,21 +154,19 @@ canvas {
 
 .size-picker {
     width: 150px;
-    display: flex;
-    flex-direction: column;
-}
-
-.size-block {
     position: absolute;
     display: none;
     flex-direction: column;
     background: #ffffff;
-    width: 150px;
-    border: 1px solid #000000;
+    border: 1px solid #ebebeb;
+    border-radius: 5px;
+    top: 130px;
+    left: 5px;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 }
 
-.size-picker:hover>.size-block {
-    display: flex;
+.size-block {
+    width: 100%;
 }
 
 .line {
@@ -162,7 +223,14 @@ canvas {
 .selected {
     pointer-events: none;
     border: 1px solid;
-    border-radius: 0;
+    width: 30px;
+    height: 30px;
+    /* border-radius: 0; */
+}
+
+.more-color {
+    min-width: 30px;
+    height: 30px;
 }
 
 .selected-color {
@@ -177,6 +245,24 @@ canvas {
 @media (max-width:800px) {
     :root {
         --font-size: 12px;
+    }
+
+    .fea-header {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .color-picker,
+    .tools,
+    .shapes,
+    .size-picker {
+        display: none;
+        top: 110px;
+        left: 5px;
+        position: absolute;
+        max-width: 100%;
+        background: #ffffff;
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
     }
 
     /* .all-btn {
