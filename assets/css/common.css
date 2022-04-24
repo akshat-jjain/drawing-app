@@ -16,9 +16,20 @@ body {
     overscroll-behavior: contain;
 }
 
+.canvas-block {
+    padding: 1%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+    margin-top: 180px;
+}
+
 canvas {
-    display: block;
-    margin: auto;
     box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
     cursor: auto;
     background: #ffffff;
@@ -30,6 +41,11 @@ header {
     width: 100%;
     padding: 0.5em;
     background: #eef4f9;
+    height: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
 }
 
 main {
@@ -59,6 +75,10 @@ main {
 }
 
 .all-btn {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    z-index: 2;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -73,7 +93,7 @@ main {
 
 .fea-header {
     display: none;
-    width: 60px;
+    min-width: 60px;
     text-align: center;
     border: 1px solid #ebebeb;
     /* height: 150px; */
@@ -125,13 +145,16 @@ main {
 }
 
 .bottom-box {
+    width: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-content: space-around;
     align-items: center;
     justify-content: center;
-    border: 1px solid;
+    background: #f8f8f8;
+    position: fixed;
+    bottom: 0;
 }
 
 
@@ -145,7 +168,7 @@ main {
     margin: 2px;
     cursor: pointer;
     transition: transform .5s;
-    background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet, red);
+    background: conic-gradient(red, orange, yellow, green, blue, indigo, violet, red);
 }
 
 .clr:hover {
@@ -201,7 +224,7 @@ main {
 .bottom-contain>div {
     flex: 0 0 auto;
     min-width: 25%;
-    border-right: 1px solid;
+    border-right: 1px solid #ebebeb;
 }
 
 .diamond {
@@ -257,7 +280,7 @@ main {
     .shapes,
     .size-picker {
         display: none;
-        top: 110px;
+        top: 55px;
         left: 5px;
         position: absolute;
         max-width: 100%;

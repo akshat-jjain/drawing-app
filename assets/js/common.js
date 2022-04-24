@@ -160,12 +160,30 @@ const stopDrawing = (e) => {
     // canvas.style.cursor = 'pointer';
 };
 
-const saveImg = () => {
+const saveImg = (type) => {
+    let ext = "", drawing;
+    switch (type) {
+        case 1:
+            drawing = canvas.toDataURL("image/jpeg");
+            ext = "jpg";
+            break;
+        case 2:
+            drawing = canvas.toDataURL("image/bmp");
+            ext = "bmp";
+            break;
+        case 3:
+            drawing = canvas.toDataURL("image/gif");
+            ext = "gif";
+            break;
+        default:
+            drawing = canvas.toDataURL("image/png");
+            ext = "png";
+            break;
+    }
     fixActive();
-    let drawing = canvas.toDataURL("imag/png");
     let a = document.createElement("a");
     a.href = drawing;
-    a.download = "painting.png";
+    a.download = `painting.${ext}`;
     a.click();
     a.remove();
 };
@@ -189,7 +207,6 @@ const drawCir = (currPosX, currPosY) => {
     let rx = (currPosX - prevPosX) / 2;
     let ry = (currPosY - prevPosY) / 2;
     context.ellipse(cx, cy, Math.abs(rx), Math.abs(ry), 0, degToRad(0), degToRad(360), false);
-    // context.arc(prevPosX, prevPosY, currPosX - prevPosX, degToRad(0), degToRad(360), false);
 };
 const drawLine = (currPosX, currPosY) => {
     context.moveTo(prevPosX, prevPosY);
@@ -331,19 +348,25 @@ color.addEventListener("input", () => {
     document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
 });
 const setSize = () => {
-    canvas.width = window.innerWidth - 50;
-    canvas.height = window.innerHeight - 210;
+    let xDiff = 50, yDiff = 20;
+    canvas.width = window.innerWidth - xDiff;
+    canvas.height = window.innerHeight - yDiff;
     sizewh.innerHTML = `${canvas.width} x  ${canvas.height}px`;
+    context.fillStyle = canvasColor;
+    context.fill();
 }
 const getCords = (e) => {
+    let xDiff = canvas.offsetLeft - window.screenX, yDiff = canvas.offsetTop - window.scrollY;
     if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
         var touch = e.touches[0] || e.changedTouches[0];
-        x = touch.clientX - canvas.offsetLeft;
-        y = touch.clientY - canvas.offsetTop;
+        x = touch.clientX;
+        y = touch.clientY;
     } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
-        x = e.clientX - canvas.offsetLeft;
-        y = e.clientY - canvas.offsetTop;
+        x = e.clientX;
+        y = e.clientY;
     }
+    x -= xDiff;
+    y -= yDiff;
     return [x, y];
 }
 const degToRad = (degrees) => {
@@ -380,7 +403,7 @@ document.querySelector(".arrow-right").addEventListener("click", () => { select 
 document.querySelector(".arrow-left").addEventListener("click", () => { select = 'arrow-left'; updatePencil(); });
 document.querySelector(".arrow-top").addEventListener("click", () => { select = 'arrow-top'; updatePencil(); });
 document.querySelector(".arrow-bottom").addEventListener("click", () => { select = 'arrow-bottom'; updatePencil(); });
-document.querySelector(".saveBtn").addEventListener("click", saveImg);
+document.querySelector(".saveBtn").addEventListener("click", () => { saveImg(0) });
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     canvas.addEventListener("touchstart", startDrawing);
     canvas.addEventListener("touchmove", draw);
@@ -406,3 +429,10 @@ canvas.addEventListener("mouseout", () => { coord.innerHTML = ""; });
 //     context.scale(factor, factor);
 //     context.translate(-x, -y);
 // }
+canvas.addEventListener("scroll",
+    console.log(canvas.scrollTop),
+    console.log(canvas.scrollLeft),
+    console.log(canvas.scrollHeight),
+    console.log(canvas.clientHeight),
+    // console.log(canvas.scroll);
+);
