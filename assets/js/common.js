@@ -1,6 +1,19 @@
 const canvas = document.getElementById("drawing-board");
-const context = canvas.getContext("2d");
+const canvas2 = document.getElementById("imaginery-board");
+const cxt = canvas.getContext("2d");
+const cxt2 = canvas2.getContext("2d");
 const color = document.getElementById("multi-color");
+const colors = ['#000000', '#696969', '#8B0000', '#FF0000', '#FFA500', '#FFFF00', '#008000', '#30D5C8', '#4b0082', '#800080', '#FFFFFF', '#D3D3D3', '#FF007F', '#FFD700', '#FFFFE0', '#00FF00', '#AFEEEE', '#6699CC', '#E6E6FA'];
+const sizes = ['1', '3', '5', '8', '10'];
+document.querySelector(".non-selected").innerHTML = '';
+colors.forEach(color => {
+    document.querySelector(".non-selected").innerHTML += `<div class="clr" data-code="${color}" style="background: ${color};"> </div>`;
+});
+document.querySelector(".size-block").innerHTML = '';
+sizes.forEach(height => {
+    document.querySelector(".size-block").innerHTML += `<div class="line"  data-width="${height}" >${height}px<hr style="height: ${height}px;"></div>`;
+});
+document.querySelector(".size-block").innerHTML += `<div class="fea-name">Size</div>`;
 const coord = document.querySelector(".coordinates");
 const sizewh = document.querySelector(".size-wh");
 let clrs = document.querySelectorAll(".clr");
@@ -11,7 +24,7 @@ let feaHeader = document.querySelectorAll(".fea-header");
 feaHeader = Array.from(feaHeader);
 let ispolygon = false;
 let polygonSt = [];
-const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond', 'pentagon', 'hexagon', 'arrow-right', 'arrow-left', 'arrow-top', 'arrow-bottom'];
+const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond', 'pentagon', 'hexagon', 'arrow-right', 'arrow-left', 'arrow-top', 'arrow-bottom', '4p-star'];
 let isDrawing = false;
 let select = "pencil";
 let pencilSize = 1;
@@ -23,13 +36,12 @@ let press = 0;
 let canvasColor = "#ffffff";
 let prevPosX = null;
 let prevPosY = null;
-context.lineCap = "round";
+cxt.lineCap = "round";
 
 clrs.forEach(clr => {
     clr.addEventListener("click", () => {
         pencilColor = clr.dataset.code;
-        context.strokeStyle = pencilColor;
-        context.lineWidth = pencilSize;
+        updatePencil();
         isErasing = false;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
     });
@@ -45,8 +57,7 @@ clrs.forEach(clr => {
 lines.forEach(line => {
     line.addEventListener("click", () => {
         pencilSize = line.dataset.width;
-        context.lineWidth = pencilSize;
-        context.strokeStyle = pencilColor;
+        updatePencil();
         isErasing = false;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
     });
@@ -64,7 +75,7 @@ const fixActive = () => {
         document.querySelector(`.${name}`).removeAttribute("style");
     })
 };
-context.beginPath();
+cxt.beginPath();
 
 const startDrawing = (e) => {
     fixActive();
@@ -79,9 +90,11 @@ const startDrawing = (e) => {
 };
 const draw = (e) => {
     e.preventDefault();
-    context.strokeStyle = (e.buttons == 2) ? secondaryColor : pencilColor;
+    cxt.strokeStyle = (e.buttons == 2) ? secondaryColor : pencilColor;
+    cxt2.strokeStyle = (e.buttons == 2) ? secondaryColor : pencilColor;
     if (isErasing && select == "eraser") {
-        context.strokeStyle = canvasColor;
+        cxt.strokeStyle = canvasColor;
+        cxt2.strokeStyle = canvasColor;
     }
     let [x, y] = getCords(e);
     coord.innerHTML = `(${parseFloat(x).toFixed(2)},${parseFloat(y).toFixed(2)}px)`;
@@ -91,71 +104,127 @@ const draw = (e) => {
     }
     fixActive();
     if (shapes.includes(select)) {
-        return;
+        canvas2.style = "z-index :1";
+        setSize(canvas2, cxt2);
+        cxt2.drawImage(canvas, 0, 0);
+        cxt2.strokeStyle = pencilColor;
+        cxt2.lineWidth = pencilSize;
+        cxt2.lineCap = "round";
+        cxt2.lineJoin = "round";
+        let [currPosX, currPosY] = getCords(e);
+        switch (select) {
+            case 'rectangle':
+                drawRect(currPosX, currPosY, cxt2);
+                break;
+            case 'ellipse':
+                drawCir(currPosX, currPosY, cxt2);
+                break;
+            case 'line':
+                drawLine(currPosX, currPosY, cxt2);
+                break;
+            case 'polygon':
+                drawPoly(currPosX, currPosY, cxt2);
+                break;
+            case 'triangle':
+                drawTri(currPosX, currPosY, cxt2);
+                break;
+            case 'right-triangle':
+                drawRiTri(currPosX, currPosY, cxt2);
+                break;
+            case 'diamond':
+                drawDiamond(currPosX, currPosY, cxt2);
+                break;
+            case 'pentagon':
+                drawGon(currPosX, currPosY, cxt2, 5);
+                break;
+            case 'hexagon':
+                drawGon(currPosX, currPosY, cxt2, 6);
+                break;
+            case 'arrow-right':
+                arrows(currPosX, currPosY, cxt2, 1);
+                break;
+            case 'arrow-left':
+                arrows(currPosX, currPosY, cxt2, 2);
+                break;
+            case 'arrow-top':
+                arrows(currPosX, currPosY, cxt2, 3);
+                break;
+            case 'arrow-bottom':
+                arrows(currPosX, currPosY, cxt2, 4);
+                break;
+            case '4p-star':
+                draw4PStar(currPosX, currPosY, cxt2);
+                break;
+        }
+        cxt2.stroke();
     } else {
         let [currPosX, currPosY] = getCords(e);
         // canvas.style.cursor = 'url("https://img.icons8.com/ios/50/000000/pencil-tip.png"), auto';
-        context.beginPath();
-        context.lineJoin = "round";
-        context.lineCap = "round";
-        context.moveTo(prevPosX, prevPosY);
-        context.lineTo(currPosX, currPosY);
-        context.stroke();
+        cxt.beginPath();
+        cxt.lineJoin = "round";
+        cxt.lineCap = "round";
+        cxt.moveTo(prevPosX, prevPosY);
+        cxt.lineTo(currPosX, currPosY);
+        cxt.stroke();
         prevPosX = currPosX;
         prevPosY = currPosY;
     }
 };
 const stopDrawing = (e) => {
+    canvas2.style = "z-index:0";
     fixActive();
     isDrawing = false;
     if (shapes.includes(select)) {
-        context.beginPath();
-        context.lineCap = "round";
-        context.lineJoin = "round";
+        cxt.beginPath();
+        cxt.lineCap = "round";
+        cxt.lineJoin = "round";
         let [currPosX, currPosY] = getCords(e);
         switch (select) {
             case 'rectangle':
-                drawRect(currPosX, currPosY);
+                drawRect(currPosX, currPosY, cxt);
                 break;
             case 'ellipse':
-                drawCir(currPosX, currPosY);
+                drawCir(currPosX, currPosY, cxt);
                 break;
             case 'line':
-                drawLine(currPosX, currPosY);
+                drawLine(currPosX, currPosY, cxt);
                 break;
             case 'polygon':
-                drawPoly(currPosX, currPosY);
+                drawPoly(currPosX, currPosY, cxt);
                 break;
             case 'triangle':
-                drawTri(currPosX, currPosY);
+                drawTri(currPosX, currPosY, cxt);
                 break;
             case 'right-triangle':
-                drawRiTri(currPosX, currPosY);
+                drawRiTri(currPosX, currPosY, cxt);
                 break;
             case 'diamond':
-                drawDiamond(currPosX, currPosY);
+                drawDiamond(currPosX, currPosY, cxt);
                 break;
             case 'pentagon':
-                drawGon(currPosX, currPosY, 5);
+                drawGon(currPosX, currPosY, cxt, 5);
                 break;
             case 'hexagon':
-                drawGon(currPosX, currPosY, 6);
+                drawGon(currPosX, currPosY, cxt, 6);
                 break;
             case 'arrow-right':
-                arrows(currPosX, currPosY, 1);
+                arrows(currPosX, currPosY, cxt, 1);
                 break;
             case 'arrow-left':
-                arrows(currPosX, currPosY, 2);
+                arrows(currPosX, currPosY, cxt, 2);
                 break;
             case 'arrow-top':
-                arrows(currPosX, currPosY, 3);
+                arrows(currPosX, currPosY, cxt, 3);
                 break;
             case 'arrow-bottom':
-                arrows(currPosX, currPosY, 4);
+                arrows(currPosX, currPosY, cxt, 4);
+                break;
+            case '4p-star':
+                draw4PStar(currPosX, currPosY, cxt);
                 break;
 
         }
-        context.stroke();
+        cxt.stroke();
     }
     // canvas.style.cursor = 'pointer';
 };
@@ -188,8 +257,8 @@ const saveImg = (type) => {
     a.remove();
 };
 const erase = () => {
-    context.strokeStyle = canvasColor;
-    context.lineWidth = eraserSize;
+    cxt.strokeStyle = canvasColor;
+    cxt.lineWidth = eraserSize;
     select = "eraser";
     isErasing = true;
 };
@@ -198,41 +267,41 @@ const pencil = () => {
     select = "pencil";
     isErasing = false;
 };
-const drawRect = (currPosX, currPosY) => {
+const drawRect = (currPosX, currPosY, context) => {
     context.rect(prevPosX, prevPosY, currPosX - prevPosX, currPosY - prevPosY);
 };
-const drawCir = (currPosX, currPosY) => {
+const drawCir = (currPosX, currPosY, context) => {
     let cx = (prevPosX + currPosX) / 2;
     let cy = (prevPosY + currPosY) / 2;
     let rx = (currPosX - prevPosX) / 2;
     let ry = (currPosY - prevPosY) / 2;
     context.ellipse(cx, cy, Math.abs(rx), Math.abs(ry), 0, degToRad(0), degToRad(360), false);
 };
-const drawLine = (currPosX, currPosY) => {
+const drawLine = (currPosX, currPosY, context) => {
     context.moveTo(prevPosX, prevPosY);
     context.lineTo(currPosX, currPosY);
 }
-const drawPoly = (currPosX, currPosY) => {
+const drawPoly = (currPosX, currPosY, context) => {
     if (currPosX - polygonSt[0] <= 2 && currPosY - polygonSt[1] <= 2) {
         ispolygon = false;
         polygonSt = [];
-        drawLine(currPosX, currPosY);
+        drawLine(currPosX, currPosY, context);
         return;
     }
     if (!ispolygon) {
         ispolygon = true;
         polygonSt = [prevPosX, prevPosY];
     }
-    drawLine(currPosX, currPosY);
+    drawLine(currPosX, currPosY, context);
     prevPosX = currPosX;
     prevPosY = currPosY;
     isDrawing = true;
 }
-const drawTri = (currPosX, currPosY) => {
-    if (prevPosY > currPosY) {
-        [prevPosY, currPosY] = [currPosY, prevPosY];
-        [prevPosX, currPosX] = [currPosX, prevPosX];
-    }
+const drawTri = (currPosX, currPosY, context) => {
+    // if (prevPosY > currPosY) {
+    //     [prevPosY, currPosY] = [currPosY, prevPosY];
+    //     [prevPosX, currPosX] = [currPosX, prevPosX];
+    // }
     let midX = (prevPosX + currPosX) / 2;
     context.beginPath();
     context.moveTo(prevPosX, currPosY);
@@ -240,20 +309,20 @@ const drawTri = (currPosX, currPosY) => {
     context.lineTo(midX, prevPosY);
     context.closePath();
 };
-const drawRiTri = (currPosX, currPosY) => {
-    if (prevPosY > currPosY) {
-        [prevPosY, currPosY] = [currPosY, prevPosY];
-    }
-    if (prevPosX > currPosX) {
-        [prevPosX, currPosX] = [currPosX, prevPosX];
-    }
+const drawRiTri = (currPosX, currPosY, context) => {
+    // if (prevPosY > currPosY) {
+    //     [prevPosY, currPosY] = [currPosY, prevPosY];
+    // }
+    // if (prevPosX > currPosX) {
+    //     [prevPosX, currPosX] = [currPosX, prevPosX];
+    // }
     context.beginPath();
     context.moveTo(prevPosX, prevPosY);
     context.lineTo(prevPosX, currPosY);
     context.lineTo(currPosX, currPosY);
     context.closePath();
 };
-const drawDiamond = (currPosX, currPosY) => {
+const drawDiamond = (currPosX, currPosY, context) => {
     let midX = (prevPosX + currPosX) / 2;
     let midY = (prevPosY + currPosY) / 2;
     context.beginPath();
@@ -263,7 +332,7 @@ const drawDiamond = (currPosX, currPosY) => {
     context.lineTo(midX, prevPosY);
     context.closePath();
 };
-const drawGon = (currPosX, currPosY, sides) => {
+const drawGon = (currPosX, currPosY, context, sides) => {
     var rx = (Math.abs(currPosX - prevPosX)) / 2;
     var ry = (Math.abs(currPosY - prevPosY)) / 2;
     var radius = Math.max(rx, ry);
@@ -279,13 +348,13 @@ const drawGon = (currPosX, currPosY, sides) => {
     context.translate(-x, -y);
     context.stroke();
 }
-const arrows = (currPosX, currPosY, type) => {
-    if (prevPosY > currPosY) {
-        [prevPosY, currPosY] = [currPosY, prevPosY];
-    }
-    if (prevPosX > currPosX) {
-        [prevPosX, currPosX] = [currPosX, prevPosX];
-    }
+const arrows = (currPosX, currPosY, context, type) => {
+    // if (prevPosY > currPosY) {
+    //     [prevPosY, currPosY] = [currPosY, prevPosY];
+    // }
+    // if (prevPosX > currPosX) {
+    //     [prevPosX, currPosX] = [currPosX, prevPosX];
+    // }
     let midX = (currPosX + prevPosX) / 2;
     let midY = (currPosY + prevPosY) / 2;
     let heightX = Math.abs(currPosX - prevPosX);
@@ -326,6 +395,30 @@ const arrows = (currPosX, currPosY, type) => {
     }
     context.closePath();
 }
+const draw4PStar = (currPosX, currPosY, context) => {
+    // if (prevPosY > currPosY) {
+    //     [prevPosY, currPosY] = [currPosY, prevPosY];
+    // }
+    // if (prevPosX > currPosX) {
+    //     [prevPosX, currPosX] = [currPosX, prevPosX];
+    // }
+    let midX = (currPosX + prevPosX) / 2;
+    let midY = (currPosY + prevPosY) / 2;
+    let heightX = Math.abs(currPosX - prevPosX);
+    let singalPartX = heightX / 8;
+    let heightY = Math.abs(currPosY - prevPosY);
+    let singalPartY = heightY / 8;
+    context.beginPath();
+    context.moveTo(midX, prevPosY);
+    context.lineTo(currPosX - singalPartX * 3, prevPosY + singalPartY * 3);
+    context.lineTo(currPosX, midY);
+    context.lineTo(currPosX - singalPartX * 3, currPosY - singalPartY * 3);
+    context.lineTo(midX, currPosY);
+    context.lineTo(prevPosX + singalPartX * 3, currPosY - singalPartY * 3);
+    context.lineTo(prevPosX, midY);
+    context.lineTo(prevPosX + singalPartX * 3, prevPosY + singalPartY * 3);
+    context.closePath();
+}
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
     press = 0;
@@ -343,16 +436,17 @@ color.addEventListener("input", () => {
         pencilColor = color.value || pencilColor;
         newColor = pencilColor;
     }
-    context.strokeStyle = newColor;
-    context.lineWidth = pencilSize;
+    cxt.strokeStyle = newColor;
+    cxt.lineWidth = pencilSize;
     document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
 });
-const setSize = () => {
+const setSize = (canvas, context) => {
     let xDiff = 50, yDiff = 20;
     canvas.width = window.innerWidth - xDiff;
     canvas.height = window.innerHeight - yDiff;
     sizewh.innerHTML = `${canvas.width} x  ${canvas.height}px`;
     context.fillStyle = canvasColor;
+    context.fillRect(0, 0, canvas.width, canvas.height);
     context.fill();
 }
 const getCords = (e) => {
@@ -373,18 +467,16 @@ const degToRad = (degrees) => {
     return degrees * Math.PI / 180;
 }
 const updatePencil = () => {
-    context.strokeStyle = pencilColor;
-    context.lineWidth = pencilSize;
+    cxt.strokeStyle = pencilColor;
+    cxt.lineWidth = pencilSize;
     ispolygon = false;
     isDrawing = false;
 }
 const reset = () => {
     prevPosX = prevPosY = null;
-    isDrawing = false;
-    ispolygon = false;
-    setSize();
-    context.strokeStyle = pencilColor;
-    context.lineWidth = pencilSize;
+    setSize(canvas, cxt);
+    setSize(canvas2, cxt2);
+    updatePencil();
 }
 canvas.addEventListener("contextmenu", (e) => { e.preventDefault() });
 document.querySelector(".clear").addEventListener("click", reset);
@@ -411,28 +503,25 @@ if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.m
     canvas.addEventListener("touchcancel", stopDrawing);
 } else {
     canvas.addEventListener("mousedown", startDrawing);
+    // canvas2.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
+    canvas2.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
+    canvas2.addEventListener("mouseup", stopDrawing);
 }
-setSize();
+setSize(canvas, cxt);
+setSize(canvas2, cxt2);
 // addEventListener('resize', () => {
-//     context.save();
+//     cxt.save();
 //     canvas.width = innerWidth - 50;
 //     canvas.height = innerHeight - 150;
-//     context.restore();
+//     cxt.restore();
 // });
 canvas.addEventListener("mouseout", () => { coord.innerHTML = ""; });
 // canvas.onwheel = (e) => {
 //     let factor = 1.5;
 //     let [x, y] = getCords(e);
-//     context.translate(x, y);
-//     context.scale(factor, factor);
-//     context.translate(-x, -y);
+//     cxt.translate(x, y);
+//     cxt.scale(factor, factor);
+//     cxt.translate(-x, -y);
 // }
-canvas.addEventListener("scroll",
-    console.log(canvas.scrollTop),
-    console.log(canvas.scrollLeft),
-    console.log(canvas.scrollHeight),
-    console.log(canvas.clientHeight),
-    // console.log(canvas.scroll);
-);

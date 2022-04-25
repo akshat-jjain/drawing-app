@@ -37,6 +37,14 @@ canvas {
     max-height: 100%;
 }
 
+#drawing-board {
+    z-index: 1;
+}
+
+#imaginery-board {
+    position: absolute;
+}
+
 header {
     width: 100%;
     padding: 0.5em;
@@ -163,7 +171,7 @@ main {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    border: 1px solid black;
+    border: 1px solid gray;
     /* border: 3px solid rgb(214, 214, 214); */
     margin: 2px;
     cursor: pointer;
@@ -176,7 +184,7 @@ main {
 }
 
 .size-picker {
-    width: 150px;
+    width: 200px;
     position: absolute;
     display: none;
     flex-direction: column;
@@ -193,11 +201,18 @@ main {
 }
 
 .line {
-    flex: 0 0 auto;
+    display: flex;
     margin: 8px;
     padding: 2px;
     cursor: pointer;
-    border: none;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+}
+
+hr {
+    width: 80%;
+    background: #000000;
 }
 
 .tool,
