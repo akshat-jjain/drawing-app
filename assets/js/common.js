@@ -98,13 +98,20 @@ const draw = (e) => {
     }
     let [x, y] = getCords(e);
     coord.innerHTML = `(${parseFloat(x).toFixed(2)},${parseFloat(y).toFixed(2)}px)`;
+    if (select == "eraser") {
+        // canvas.style.cursor = 'none';
+        $('#eraser-cursor').css('left', e.clientX).css('top', e.clientY).css('width', eraserSize).css('height', eraserSize);
+    } else {
+        canvas.style.cursor = '';
+        // $('#eraser-cursor').hide();
+    }
     if (prevPosX == null || prevPosY == null || !isDrawing) {
         [prevPosX, prevPosY] = getCords(e);
         return
     }
     fixActive();
     if (shapes.includes(select)) {
-        canvas2.style = "z-index :1";
+        canvas.style = "opacity: .1;";
         setSize(canvas2, cxt2);
         cxt2.drawImage(canvas, 0, 0);
         cxt2.strokeStyle = pencilColor;
@@ -171,7 +178,7 @@ const draw = (e) => {
     }
 };
 const stopDrawing = (e) => {
-    canvas2.style = "z-index:0";
+    canvas.style = "opacity: 1;";
     fixActive();
     isDrawing = false;
     if (shapes.includes(select)) {
@@ -267,164 +274,15 @@ const pencil = () => {
     select = "pencil";
     isErasing = false;
 };
-const drawRect = (currPosX, currPosY, context) => {
-    context.rect(prevPosX, prevPosY, currPosX - prevPosX, currPosY - prevPosY);
-};
-const drawCir = (currPosX, currPosY, context) => {
-    let cx = (prevPosX + currPosX) / 2;
-    let cy = (prevPosY + currPosY) / 2;
-    let rx = (currPosX - prevPosX) / 2;
-    let ry = (currPosY - prevPosY) / 2;
-    context.ellipse(cx, cy, Math.abs(rx), Math.abs(ry), 0, degToRad(0), degToRad(360), false);
-};
-const drawLine = (currPosX, currPosY, context) => {
-    context.moveTo(prevPosX, prevPosY);
-    context.lineTo(currPosX, currPosY);
-}
-const drawPoly = (currPosX, currPosY, context) => {
-    if (currPosX - polygonSt[0] <= 2 && currPosY - polygonSt[1] <= 2) {
-        ispolygon = false;
-        polygonSt = [];
-        drawLine(currPosX, currPosY, context);
-        return;
-    }
-    if (!ispolygon) {
-        ispolygon = true;
-        polygonSt = [prevPosX, prevPosY];
-    }
-    drawLine(currPosX, currPosY, context);
-    prevPosX = currPosX;
-    prevPosY = currPosY;
-    isDrawing = true;
-}
-const drawTri = (currPosX, currPosY, context) => {
-    // if (prevPosY > currPosY) {
-    //     [prevPosY, currPosY] = [currPosY, prevPosY];
-    //     [prevPosX, currPosX] = [currPosX, prevPosX];
-    // }
-    let midX = (prevPosX + currPosX) / 2;
-    context.beginPath();
-    context.moveTo(prevPosX, currPosY);
-    context.lineTo(currPosX, currPosY);
-    context.lineTo(midX, prevPosY);
-    context.closePath();
-};
-const drawRiTri = (currPosX, currPosY, context) => {
-    // if (prevPosY > currPosY) {
-    //     [prevPosY, currPosY] = [currPosY, prevPosY];
-    // }
-    // if (prevPosX > currPosX) {
-    //     [prevPosX, currPosX] = [currPosX, prevPosX];
-    // }
-    context.beginPath();
-    context.moveTo(prevPosX, prevPosY);
-    context.lineTo(prevPosX, currPosY);
-    context.lineTo(currPosX, currPosY);
-    context.closePath();
-};
-const drawDiamond = (currPosX, currPosY, context) => {
-    let midX = (prevPosX + currPosX) / 2;
-    let midY = (prevPosY + currPosY) / 2;
-    context.beginPath();
-    context.moveTo(prevPosX, midY);
-    context.lineTo(midX, currPosY);
-    context.lineTo(currPosX, midY);
-    context.lineTo(midX, prevPosY);
-    context.closePath();
-};
-const drawGon = (currPosX, currPosY, context, sides) => {
-    var rx = (Math.abs(currPosX - prevPosX)) / 2;
-    var ry = (Math.abs(currPosY - prevPosY)) / 2;
-    var radius = Math.max(rx, ry);
-    var x = (currPosX + prevPosX) / 2;
-    var y = (currPosY + prevPosY) / 2;
-    var angle = 2 * Math.PI / sides;
-    context.beginPath();
-    context.translate(x, y);
-    context.moveTo(radius, 0);
-    for (var i = 1; i <= sides; i++) {
-        context.lineTo(radius * Math.cos(i * angle), radius * Math.sin(i * angle));
-    }
-    context.translate(-x, -y);
-    context.stroke();
-}
-const arrows = (currPosX, currPosY, context, type) => {
-    // if (prevPosY > currPosY) {
-    //     [prevPosY, currPosY] = [currPosY, prevPosY];
-    // }
-    // if (prevPosX > currPosX) {
-    //     [prevPosX, currPosX] = [currPosX, prevPosX];
-    // }
-    let midX = (currPosX + prevPosX) / 2;
-    let midY = (currPosY + prevPosY) / 2;
-    let heightX = Math.abs(currPosX - prevPosX);
-    let heightY = Math.abs(currPosY - prevPosY);
-    context.beginPath();
-    if (type == 1) {
-        context.moveTo(midX, prevPosY);
-        context.lineTo(currPosX, midY);
-        context.lineTo(midX, currPosY);
-        context.lineTo(midX, currPosY - heightY / 4);
-        context.lineTo(prevPosX, currPosY - heightY / 4);
-        context.lineTo(prevPosX, prevPosY + heightY / 4);
-        context.lineTo(midX, prevPosY + heightY / 4);
-    } else if (type == 2) {
-        context.moveTo(midX, prevPosY);
-        context.lineTo(prevPosX, midY);
-        context.lineTo(midX, currPosY);
-        context.lineTo(midX, currPosY - heightY / 4);
-        context.lineTo(currPosX, currPosY - heightY / 4);
-        context.lineTo(currPosX, prevPosY + heightY / 4);
-        context.lineTo(midX, prevPosY + heightY / 4);
-    } else if (type == 3) {
-        context.moveTo(midX, prevPosY);
-        context.lineTo(currPosX, midY);
-        context.lineTo(currPosX - heightX / 4, midY);
-        context.lineTo(currPosX - heightX / 4, currPosY);
-        context.lineTo(prevPosX + heightX / 4, currPosY);
-        context.lineTo(prevPosX + heightX / 4, midY);
-        context.lineTo(prevPosX, midY);
-    } else {
-        context.moveTo(prevPosX + heightX / 4, prevPosY);
-        context.lineTo(currPosX - heightX / 4, prevPosY);
-        context.lineTo(currPosX - heightX / 4, midY);
-        context.lineTo(currPosX, midY);
-        context.lineTo(midX, currPosY);
-        context.lineTo(prevPosX, midY);
-        context.lineTo(prevPosX + heightX / 4, midY);
-    }
-    context.closePath();
-}
-const draw4PStar = (currPosX, currPosY, context) => {
-    // if (prevPosY > currPosY) {
-    //     [prevPosY, currPosY] = [currPosY, prevPosY];
-    // }
-    // if (prevPosX > currPosX) {
-    //     [prevPosX, currPosX] = [currPosX, prevPosX];
-    // }
-    let midX = (currPosX + prevPosX) / 2;
-    let midY = (currPosY + prevPosY) / 2;
-    let heightX = Math.abs(currPosX - prevPosX);
-    let singalPartX = heightX / 8;
-    let heightY = Math.abs(currPosY - prevPosY);
-    let singalPartY = heightY / 8;
-    context.beginPath();
-    context.moveTo(midX, prevPosY);
-    context.lineTo(currPosX - singalPartX * 3, prevPosY + singalPartY * 3);
-    context.lineTo(currPosX, midY);
-    context.lineTo(currPosX - singalPartX * 3, currPosY - singalPartY * 3);
-    context.lineTo(midX, currPosY);
-    context.lineTo(prevPosX + singalPartX * 3, currPosY - singalPartY * 3);
-    context.lineTo(prevPosX, midY);
-    context.lineTo(prevPosX + singalPartX * 3, prevPosY + singalPartY * 3);
-    context.closePath();
-}
+
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
+    fixActive();
     press = 0;
 });
 document.getElementById("color-chooser").addEventListener("contextmenu", () => {
     color.click();
+    fixActive();
     press = 2;
 });
 color.addEventListener("input", () => {
@@ -505,9 +363,9 @@ if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.m
     canvas.addEventListener("mousedown", startDrawing);
     // canvas2.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
-    canvas2.addEventListener("mousemove", draw);
+    // canvas2.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
-    canvas2.addEventListener("mouseup", stopDrawing);
+    // canvas2.addEventListener("mouseup", stopDrawing);
 }
 setSize(canvas, cxt);
 setSize(canvas2, cxt2);
@@ -517,7 +375,13 @@ setSize(canvas2, cxt2);
 //     canvas.height = innerHeight - 150;
 //     cxt.restore();
 // });
-canvas.addEventListener("mouseout", () => { coord.innerHTML = ""; });
+canvas.addEventListener("mouseout", () => {
+    coord.innerHTML = "";
+    $('#eraser-cursor').hide();
+});
+canvas.addEventListener("mouseenter", () => {
+    // $('#eraser-cursor').show();
+});
 // canvas.onwheel = (e) => {
 //     let factor = 1.5;
 //     let [x, y] = getCords(e);

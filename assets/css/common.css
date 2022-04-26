@@ -31,7 +31,7 @@ body {
 
 canvas {
     box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-    cursor: auto;
+    cursor: crosshair;
     background: #ffffff;
     max-width: 100%;
     max-height: 100%;
@@ -43,6 +43,16 @@ canvas {
 
 #imaginery-board {
     position: absolute;
+}
+
+#eraser-cursor {
+    cursor: none;
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    border: 1px solid #000000;
 }
 
 header {
@@ -153,6 +163,7 @@ main {
 }
 
 .bottom-box {
+    z-index: 2;
     width: 100%;
     display: flex;
     flex-direction: row;
