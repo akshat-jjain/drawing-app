@@ -9,6 +9,7 @@ document.querySelector(".non-selected").innerHTML = '';
 colors.forEach(color => {
     document.querySelector(".non-selected").innerHTML += `<div class="clr" data-code="${color}" style="background: ${color};"> </div>`;
 });
+document.cookie = "SameSite=None";
 document.querySelector(".size-block").innerHTML = '';
 sizes.forEach(height => {
     document.querySelector(".size-block").innerHTML += `<div class="line"  data-width="${height}" >${height}px<hr style="height: ${height}px;"></div>`;
@@ -44,6 +45,9 @@ clrs.forEach(clr => {
         updatePencil();
         isErasing = false;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
+        if (select == "eraser") {
+            select = "pencil";
+        }
     });
 });
 clrs.forEach(clr => {
@@ -52,6 +56,9 @@ clrs.forEach(clr => {
         secondaryColor = clr.dataset.code;
         isErasing = false;
         document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
+        if (select == "eraser") {
+            select = "pencil";
+        }
     });
 });
 lines.forEach(line => {
@@ -98,13 +105,11 @@ const draw = (e) => {
     }
     let [x, y] = getCords(e);
     coord.innerHTML = `(${parseFloat(x).toFixed(2)},${parseFloat(y).toFixed(2)}px)`;
-    if (select == "eraser") {
-        // canvas.style.cursor = 'none';
-        $('#eraser-cursor').css('left', e.clientX).css('top', e.clientY).css('width', eraserSize).css('height', eraserSize);
-    } else {
-        canvas.style.cursor = '';
-        // $('#eraser-cursor').hide();
-    }
+    // if (select == "eraser") {
+    //     canvas.style.cursor = `url("https://img.icons8.com/external-royyan-wijaya-detailed-outline-royyan-wijaya/${eraserSize}/000000/external-square-music-royyan-wijaya-detailed-outline-royyan-wijaya.png"), auto`;
+    // } else {
+    //     canvas.style.cursor = '';
+    // }
     if (prevPosX == null || prevPosY == null || !isDrawing) {
         [prevPosX, prevPosY] = getCords(e);
         return
@@ -166,7 +171,6 @@ const draw = (e) => {
         cxt2.stroke();
     } else {
         let [currPosX, currPosY] = getCords(e);
-        // canvas.style.cursor = 'url("https://img.icons8.com/ios/50/000000/pencil-tip.png"), auto';
         cxt.beginPath();
         cxt.lineJoin = "round";
         cxt.lineCap = "round";
@@ -233,7 +237,6 @@ const stopDrawing = (e) => {
         }
         cxt.stroke();
     }
-    // canvas.style.cursor = 'pointer';
 };
 
 const saveImg = (type) => {
@@ -277,12 +280,10 @@ const pencil = () => {
 
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
-    fixActive();
     press = 0;
 });
 document.getElementById("color-chooser").addEventListener("contextmenu", () => {
     color.click();
-    fixActive();
     press = 2;
 });
 color.addEventListener("input", () => {
@@ -297,6 +298,9 @@ color.addEventListener("input", () => {
     cxt.strokeStyle = newColor;
     cxt.lineWidth = pencilSize;
     document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
+    if (select == "eraser") {
+        select = "pencil";
+    }
 });
 const setSize = (canvas, context) => {
     let xDiff = 50, yDiff = 20;
@@ -337,6 +341,20 @@ const reset = () => {
     updatePencil();
 }
 canvas.addEventListener("contextmenu", (e) => { e.preventDefault() });
+window.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.key === "+" && select == "eraser") {
+        e.preventDefault();
+        eraserSize++;
+        console.log(eraserSize);
+        erase();
+    }
+    if (e.ctrlKey && e.key === "-" && select == "eraser") {
+        e.preventDefault();
+        eraserSize++;
+        console.log(eraserSize);
+        erase();
+    }
+});
 document.querySelector(".clear").addEventListener("click", reset);
 document.querySelector(".pencil").addEventListener("click", pencil);
 document.querySelector(".eraser").addEventListener("click", erase);
@@ -361,31 +379,9 @@ if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.m
     canvas.addEventListener("touchcancel", stopDrawing);
 } else {
     canvas.addEventListener("mousedown", startDrawing);
-    // canvas2.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
-    // canvas2.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
-    // canvas2.addEventListener("mouseup", stopDrawing);
 }
 setSize(canvas, cxt);
 setSize(canvas2, cxt2);
-// addEventListener('resize', () => {
-//     cxt.save();
-//     canvas.width = innerWidth - 50;
-//     canvas.height = innerHeight - 150;
-//     cxt.restore();
-// });
-canvas.addEventListener("mouseout", () => {
-    coord.innerHTML = "";
-    $('#eraser-cursor').hide();
-});
-canvas.addEventListener("mouseenter", () => {
-    // $('#eraser-cursor').show();
-});
-// canvas.onwheel = (e) => {
-//     let factor = 1.5;
-//     let [x, y] = getCords(e);
-//     cxt.translate(x, y);
-//     cxt.scale(factor, factor);
-//     cxt.translate(-x, -y);
-// }
+canvas.addEventListener("mouseout", () => { coord.innerHTML = ""; });

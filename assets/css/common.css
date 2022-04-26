@@ -45,16 +45,6 @@ canvas {
     position: absolute;
 }
 
-#eraser-cursor {
-    cursor: none;
-    position: absolute;
-    display: none;
-    top: 0;
-    left: 0;
-    z-index: 10000;
-    border: 1px solid #000000;
-}
-
 header {
     width: 100%;
     padding: 0.5em;
