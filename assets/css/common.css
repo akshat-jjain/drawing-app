@@ -45,6 +45,18 @@ canvas {
     position: absolute;
 }
 
+#eraser-cursor {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    z-index: 1000;
+    border: 1px solid #000000;
+    cursor: none;
+}
+
 header {
     width: 100%;
     padding: 0.5em;
@@ -218,13 +230,41 @@ hr {
 
 .tool,
 .shape {
-    flex: 0 0 auto;
     width: 30px;
     height: 30px;
-    /* border: 1px solid #000000; */
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     text-align: center;
-    /* padding: 6%; */
+}
+
+.shape[data-shape="line"] {
+    background: #000000;
+    padding: 0.6px;
+    border-radius: 5px;
+    height: 1px;
+    transform: rotate(45deg);
+}
+
+.shape[data-shape="diamond"] {
+    transform: rotate(45deg);
+}
+
+.shape[data-shape="pentagon"] {
+    transform: rotate(-55deg);
+}
+
+.shape[data-shape="arrow-left"] {
+    transform: rotate(180deg);
+}
+
+.shape[data-shape="arrow-top"] {
+    transform: rotate(-90deg);
+}
+
+.shape[data-shape="arrow-bottom"] {
+    transform: rotate(90deg);
 }
 
 .bottom-contain {
@@ -243,20 +283,15 @@ hr {
     border-right: 1px solid #ebebeb;
 }
 
-.diamond {
-    transform: rotate(45deg);
-}
-
-.sline {
-    background: #000000;
-    padding: 0.6px;
-    border-radius: 5px;
-    height: 1px;
-    transform: rotate(45deg);
-}
-
-.pentagon {
-    transform: rotate(-55deg);
+.coordinate-box,
+.select-size,
+.canvas-size {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .selected {
@@ -268,8 +303,20 @@ hr {
 }
 
 .more-color {
+    position: relative;
     min-width: 30px;
     height: 30px;
+}
+
+.more-color .badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    padding: 1px 2px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #000000;
+    font-size: 10px;
 }
 
 .selected-color {

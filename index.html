@@ -24,7 +24,7 @@
             </div>
             <div class="header-option">
                 <!-- <div class="opt">File</div> -->
-                <div class="opt saveBtn"><i class="material-icons-outlined">save</i></div>
+                <div class="opt saveBtn" title="Download"><i class="material-icons-outlined">save</i></div>
                 <div class="opt clear" title="Clear All"><i class="material-icons-outlined">clear_all</i></div>
             </div>
         </header>
@@ -36,8 +36,9 @@
                     <span>Tools</span>
                 </div>
                 <div class="tools">
+                    <div class="tool pencil material-icons-outlined" title="Pencil">create</div>
                     <div class="tool eraser fa fa-eraser" title="Eraser"></div>
-                    <div class="tool pencil fa fa-pencil" title="Pencil"></div>
+                    <div class="tool picker material-icons-outlined" title="Colour Picker">colorize</div>
                     <div class="fea-name">Tools</div>
                 </div>
                 <div class="fea-header" id="shape-box" data-name="shapes">
@@ -46,19 +47,24 @@
                     <span>Shapes</span>
                 </div>
                 <div class="shapes">
-                    <div class="shape sline" title="Line"></div>
-                    <div class="shape rectangle material-icons-outlined" title="Rectangle">rectangle</div>
-                    <div class="shape polygon fa fa-polygon" title="Polygon"></div>
-                    <div class="shape ellipse material-icons-outlined" title="Ellipse">lens</div>
-                    <div class="shape triangle material-icons" title="Triangle">change_history</div>
-                    <div class="shape right-triangle material-icons-outlined" title="Right Triangle">square_foot</div>
-                    <div class="shape diamond material-icons-outlined" title="Diamond">square</div>
-                    <div class="shape pentagon material-icons-outlined" title="Pentagon">pentagon</div>
-                    <div class="shape hexagon material-icons-outlined" title="Hexagon">hexagon</div>
-                    <div class="shape arrow-right fa fa-arrow-right" title="Arrow Right"></div>
-                    <div class="shape arrow-left fa fa-arrow-left" title="Arrow Left"></div>
-                    <div class="shape arrow-top fa fa-arrow-up" title="Arrow Top"></div>
-                    <div class="shape arrow-bottom fa fa-arrow-down" title="Arrow Bottom"></div>
+                    <div class="shape" title="Line" data-shape="line"></div>
+                    <div class="shape material-icons-outlined" title="Rectangle" data-shape="rectangle">
+                        rectangle</div>
+                    <div class="shape material-icons-outlined" title="Polygon" data-shape="polygon"></div>
+                    <div class="shape material-icons-outlined" title="Ellipse" data-shape="ellipse">lens</div>
+                    <div class="shape material-icons-outlined" title="Triangle" data-shape="triangle">change_history
+                    </div>
+                    <div class="shape material-icons-outlined" title="Right Triangle" data-shape="right-triangle">
+                        square_foot</div>
+                    <div class="shape material-icons-outlined" title="Diamond" data-shape="diamond">square</div>
+                    <div class="shape material-icons-outlined" title="Pentagon" data-shape="pentagon">pentagon</div>
+                    <div class="shape material-icons-outlined" title="Hexagon" data-shape="hexagon">hexagon</div>
+                    <div class="shape material-icons-outlined" title="Arrow Right" data-shape="arrow-right">forward
+                    </div>
+                    <div class="shape material-icons-outlined" title="Arrow Left" data-shape="arrow-left">forward</div>
+                    <div class="shape material-icons-outlined" title="Arrow Top" data-shape="arrow-top">forward</div>
+                    <div class="shape material-icons-outlined" title="Arrow Bottom" data-shape="arrow-bottom">forward
+                    </div>
                     <div class="fea-name">Shapes</div>
                 </div>
                 <div class="fea-header" id="size-box" data-name="size-picker">
@@ -85,7 +91,7 @@
                             </div>
                         </div>
                         <div class="non-selected"></div>
-                        <div class="clr more-color" data-code="" id="color-chooser"> </div>
+                        <div class="clr more-color" data-code="" id="color-chooser"><span class="badge">+</span> </div>
                     </div>
                     <div class="fea-name">Colours</div>
                     <input type="color" name="" id="multi-color" style="display: none;" />
@@ -98,8 +104,12 @@
             <div class="bottom-box">
                 <div class="bottom-contain">
                     <div class="coordinate-box">
-                        <i class="fa fa-mouse-pointer"></i>
+                        <i class="material-icons-outlined">navigation</i>
                         <span class="coordinates">(0,0)</span>
+                    </div>
+                    <div class="select-size">
+                        <i class="material-icons-outlined">highlight_alt</i>
+                        <span class="select-area"></span>
                     </div>
                     <div class="canvas-size">
                         <i class="material-icons-outlined">aspect_ratio</i>

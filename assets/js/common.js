@@ -23,6 +23,8 @@ let lines = document.querySelectorAll(".line");
 lines = Array.from(lines);
 let feaHeader = document.querySelectorAll(".fea-header");
 feaHeader = Array.from(feaHeader);
+let shape = document.querySelectorAll(".shape");
+shape = Array.from(shape);
 let ispolygon = false;
 let polygonSt = [];
 const shapes = ['line', 'rectangle', 'ellipse', 'polygon', 'triangle', 'right-triangle', 'diamond', 'pentagon', 'hexagon', 'arrow-right', 'arrow-left', 'arrow-top', 'arrow-bottom', '4p-star'];
@@ -37,6 +39,7 @@ let press = 0;
 let canvasColor = "#ffffff";
 let prevPosX = null;
 let prevPosY = null;
+let elemLeft = canvas.offsetLeft + canvas.clientLeft, elemTop = canvas.offsetTop + canvas.clientTop;
 cxt.lineCap = "round";
 
 clrs.forEach(clr => {
@@ -104,11 +107,16 @@ const draw = (e) => {
         cxt2.strokeStyle = canvasColor;
     }
     let [x, y] = getCords(e);
-    coord.innerHTML = `(${parseFloat(x).toFixed(2)},${parseFloat(y).toFixed(2)}px)`;
+    coord.innerHTML = `${parseFloat(x).toFixed(2)},${parseFloat(y).toFixed(2)}px`;
     // if (select == "eraser") {
-    //     canvas.style.cursor = `url("https://img.icons8.com/external-royyan-wijaya-detailed-outline-royyan-wijaya/${eraserSize}/000000/external-square-music-royyan-wijaya-detailed-outline-royyan-wijaya.png"), auto`;
+    //     // canvas.style.cursor = `url("https://img.icons8.com/external-royyan-wijaya-detailed-outline-royyan-wijaya/${eraserSize}/000000/external-square-music-royyan-wijaya-detailed-outline-royyan-wijaya.png"), auto`;
+    //     moveX += e.movementX;
+    //     moveY += e.movementY;
+    //     document.querySelector("#eraser-cursor").style = `display: flex;top: ${moveY}px;left: ${moveX}px;width: ${eraserSize}px;height: ${eraserSize}px`;
+    //     // canvas.style.cursor = 'none';
     // } else {
-    //     canvas.style.cursor = '';
+    //     // canvas.style.cursor = 'cross-hair';
+    //     document.querySelector("#eraser-cursor").style = ``;
     // }
     if (prevPosX == null || prevPosY == null || !isDrawing) {
         [prevPosX, prevPosY] = getCords(e);
@@ -124,6 +132,7 @@ const draw = (e) => {
         cxt2.lineCap = "round";
         cxt2.lineJoin = "round";
         let [currPosX, currPosY] = getCords(e);
+        document.querySelector(".select-area").innerHTML = `${Math.abs(currPosX - prevPosX)} x ${Math.abs(currPosY - prevPosY)}px`;
         switch (select) {
             case 'rectangle':
                 drawRect(currPosX, currPosY, cxt2);
@@ -182,6 +191,7 @@ const draw = (e) => {
     }
 };
 const stopDrawing = (e) => {
+    document.querySelector(".select-area").innerHTML = ``;
     canvas.style = "opacity: 1;";
     fixActive();
     isDrawing = false;
@@ -277,7 +287,9 @@ const pencil = () => {
     select = "pencil";
     isErasing = false;
 };
-
+const picker = () => {
+    select = "picker";
+}
 document.getElementById("color-chooser").addEventListener("click", () => {
     color.click();
     press = 0;
@@ -357,20 +369,14 @@ window.addEventListener("keydown", (e) => {
 });
 document.querySelector(".clear").addEventListener("click", reset);
 document.querySelector(".pencil").addEventListener("click", pencil);
-document.querySelector(".eraser").addEventListener("click", erase);
-document.querySelector(".sline").addEventListener("click", () => { select = 'line'; updatePencil(); });
-document.querySelector(".rectangle").addEventListener("click", () => { select = 'rectangle'; updatePencil(); });
-document.querySelector(".polygon").addEventListener("click", () => { select = 'polygon'; updatePencil(); });
-document.querySelector(".ellipse").addEventListener("click", () => { select = 'ellipse'; updatePencil(); });
-document.querySelector(".triangle").addEventListener("click", () => { select = 'triangle'; updatePencil(); });
-document.querySelector(".right-triangle").addEventListener("click", () => { select = 'right-triangle'; updatePencil(); });
-document.querySelector(".diamond").addEventListener("click", () => { select = 'diamond'; updatePencil(); });
-document.querySelector(".pentagon").addEventListener("click", () => { select = 'pentagon'; updatePencil(); });
-document.querySelector(".hexagon").addEventListener("click", () => { select = 'hexagon'; updatePencil(); });
-document.querySelector(".arrow-right").addEventListener("click", () => { select = 'arrow-right'; updatePencil(); });
-document.querySelector(".arrow-left").addEventListener("click", () => { select = 'arrow-left'; updatePencil(); });
-document.querySelector(".arrow-top").addEventListener("click", () => { select = 'arrow-top'; updatePencil(); });
-document.querySelector(".arrow-bottom").addEventListener("click", () => { select = 'arrow-bottom'; updatePencil(); });
+document.querySelector(".eraser").addEventListener("click", (e) => { moveX = e.pageX; moveY = e.pageY; erase(); });
+document.querySelector(".picker").addEventListener("click", picker);
+shape.forEach(shp => {
+    shp.addEventListener("click", () => {
+        select = shp.dataset.shape;
+        updatePencil();
+    });
+});
 document.querySelector(".saveBtn").addEventListener("click", () => { saveImg(0) });
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     canvas.addEventListener("touchstart", startDrawing);
@@ -384,4 +390,21 @@ if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.m
 }
 setSize(canvas, cxt);
 setSize(canvas2, cxt2);
+function rgbToHex(r, g, b) {
+    if (r > 255 || g > 255 || b > 255)
+        throw "Invalid color component";
+    return ((r << 16) | (g << 8) | b).toString(16);
+}
 canvas.addEventListener("mouseout", () => { coord.innerHTML = ""; });
+canvas.addEventListener("click", (e) => {
+    if (select == "picker") {
+        let x = e.pageX - elemLeft, y = e.pageY - elemTop;
+        let pixelData = cxt.getImageData(x, y, 1, 1).data;
+        if ((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0) && (pixelData[3] == 0)) {
+            return;
+        }
+        pencilColor = "#" + ("000000" + rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
+        document.body.style = "--picked-size :" + pencilSize + "px;--picked-color :" + pencilColor + ";--secondary-color :" + secondaryColor;
+        select = "pencil";
+    }
+});
