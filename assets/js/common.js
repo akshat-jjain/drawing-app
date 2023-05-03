@@ -383,7 +383,9 @@ if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.m
     canvas.addEventListener("touchmove", draw);
     canvas.addEventListener("touchend", () => {
         stopDrawing;
-        (prevPosX = null), (prevPosY = null);
+        if (select == "pencil") {
+            (prevPosX = null), (prevPosY = null);
+        }
     });
     canvas.addEventListener("touchcancel", stopDrawing);
 } else {
