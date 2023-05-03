@@ -381,12 +381,21 @@ document.querySelector(".saveBtn").addEventListener("click", () => { saveImg(0) 
 if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {
     canvas.addEventListener("touchstart", startDrawing);
     canvas.addEventListener("touchmove", draw);
-    canvas.addEventListener("touchend", stopDrawing);
+    canvas.addEventListener("touchend", () => {
+        stopDrawing;
+        (prevPosX = null), (prevPosY = null);
+    });
     canvas.addEventListener("touchcancel", stopDrawing);
 } else {
     canvas.addEventListener("mousedown", startDrawing);
+    // canvas.addEventListener("mouseenter", () => {
+    //   isDrawing = true;
+    // });
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseleave", () => {
+        (prevPosX = null), (prevPosY = null);
+    });
 }
 setSize(canvas, cxt);
 setSize(canvas2, cxt2);
